@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BotHost • Aloja Bots como un Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; }
+    .terminal { background: #0a0f1c; font-family: 'Courier New', monospace; box-shadow: inset 0 0 40px rgba(0,255,150,0.1); }
+    .bot-card { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .bot-card:hover { transform: translateY(-12px) scale(1.03); }
+    .gradient-text { background: linear-gradient(90deg, #3b82f6, #22d3ee, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  </style>
+</head>
+<body class="bg-gray-950 text-white">
+
+  <!-- Navbar con más color -->
+  <nav class="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 border-b border-blue-500/30 sticky top-0 z-50 backdrop-blur-lg">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+          <i class="fas fa-robot text-white text-3xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold tracking-tighter gradient-text">BotHost</h1>
+      </div>
+      
+      <div id="nav-menu" class="hidden md:flex items-center gap-8 text-lg font-medium">
+        <a onclick="showSection('bots')" class="hover:text-cyan-400 transition cursor-pointer">Mis Bots</a>
+        <a onclick="showSection('deploy')" class="hover:text-cyan-400 transition cursor-pointer">Desplegar</a>
+        <a onclick="showSection('console')" class="hover:text-cyan-400 transition cursor-pointer">Consola</a>
+        <a onclick="showSection('stats')" class="hover:text-cyan-400 transition cursor-pointer">Stats</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div id="user-info" class="hidden items-center gap-3">
+          <div class="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-lg">👤</div>
+          <span id="username-display" class="font-medium"></span>
+        </div>
+        <button onclick="logout()" id="btn-logout" class="hidden px-6 py-3 bg-red-500/90 hover:bg-red-600 rounded-2xl text-sm font-semibold transition">Salir</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Auth Screen (mejorado) -->
+  <div id="auth-screen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950">
+    <div class="max-w-md w-full mx-4 bg-gray-900/90 backdrop-blur-2xl p-10 rounded-3xl border border-purple-500/30 shadow-2xl">
+      <!-- ... (mantengo el auth igual pero con más color) -->
+      <div class="text-center mb-10">
+        <div class="inline-flex w-24 h-24 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-3xl items-center justify-center mb-6 shadow-xl">
+          <i class="fas fa-robot text-6xl text-white"></i>
+        </div>
+        <h2 class="text-5xl font-bold gradient-text">BotHost</h2>
+      </div>
+
+      <div id="login-form">
+        <input id="login-user" type="text" placeholder="Usuario o email" class="w-full bg-gray-800/80 border border-purple-500/30 rounded-2xl px-6 py-4 mb-4 focus:outline-none focus:border-cyan-400">
+        <input id="login-pass" type="password" placeholder="Contraseña" class="w-full bg-gray-800/80 border border-purple-500/30 rounded-2xl px-6 py-4 mb-6 focus:outline-none focus:border-cyan-400">
+        <button onclick="login()" class="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 py-4 rounded-2xl text-lg font-bold hover:scale-105 transition">Iniciar Sesión</button>
+        <p class="text-center mt-6 text-gray-400">¿Nuevo? <span onclick="showRegister()" class="text-cyan-400 hover:underline cursor-pointer">Regístrate gratis</span></p>
+      </div>
+
+      <div id="register-form" class="hidden">
+        <input id="reg-user" type="text" placeholder="Usuario" class="w-full bg-gray-800/80 border border-purple-500/30 rounded-2xl px-6 py-4 mb-4">
+        <input id="reg-email" type="email" placeholder="Correo" class="w-full bg-gray-800/80 border border-purple-500/30 rounded-2xl px-6 py-4 mb-4">
+        <input id="reg-pass" type="password" placeholder="Contraseña" class="w-full bg-gray-800/80 border border-purple-500/30 rounded-2xl px-6 py-4 mb-6">
+        <button onclick="register()" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 py-4 rounded-2xl text-lg font-bold">Crear Cuenta</button>
+        <p class="text-center mt-6 text-gray-400">¿Ya tienes cuenta? <span onclick="showLogin()" class="text-cyan-400 hover:underline cursor-pointer">Inicia sesión</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard con más color -->
+  <div id="dashboard" class="hidden">
+
+    <div class="bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900 py-16">
+      <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="text-6xl font-bold mb-3">Hola, <span id="welcome-name" class="gradient-text"></span> 👋</h2>
+        <p class="text-2xl text-cyan-300">Tu panel de bots está listo</p>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 py-10 grid lg:grid-cols-12 gap-8">
+
+      <!-- Panel Lateral con más color -->
+      <div class="lg:col-span-3">
+        <div class="bg-gradient-to-b from-gray-900 to-slate-900 rounded-3xl p-7 sticky top-6 border border-blue-500/20 shadow-xl">
+          <h3 class="uppercase tracking-widest text-cyan-400 text-sm mb-6 font-semibold">Panel de Control</h3>
+          <div class="space-y-2">
+            <button onclick="showSection('bots')" class="w-full text-left px-6 py-4 hover:bg-blue-600/20 rounded-2xl flex items-center gap-4 text-lg transition"><i class="fas fa-robot text-blue-400"></i> Mis Bots</button>
+            <button onclick="showSection('deploy')" class="w-full text-left px-6 py-4 hover:bg-purple-600/20 rounded-2xl flex items-center gap-4 text-lg transition"><i class="fas fa-plus text-purple-400"></i> Nuevo Bot</button>
+            <button onclick="showSection('console')" class="w-full text-left px-6 py-4 hover:bg-emerald-600/20 rounded-2xl flex items-center gap-4 text-lg transition"><i class="fas fa-terminal text-emerald-400"></i> Consola Live</button>
+            <button onclick="showSection('stats')" class="w-full text-left px-6 py-4 hover:bg-pink-600/20 rounded-2xl flex items-center gap-4 text-lg transition"><i class="fas fa-chart-bar text-pink-400"></i> Estadísticas</button>
+          </div>
+          <div class="mt-12 pt-8 border-t border-gray-700 text-xs text-gray-400">
+            Creado por <strong class="text-white">Luis González</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido Principal -->
+      <div class="lg:col-span-9 space-y-12">
+
+        <!-- Mis Bots -->
+        <div id="section-bots" class="section">
+          <div class="flex justify-between mb-8">
+            <h2 class="text-4xl font-bold">Mis Bots</h2>
+            <button onclick="showSection('deploy')" class="bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 rounded-2xl flex items-center gap-3 hover:scale-105 transition">
+              <i class="fas fa-plus"></i> Desplegar Nuevo
+            </button>
+          </div>
+          <div id="bots-list" class="grid md:grid-cols-2 gap-6"></div>
+        </div>
+
+        <!-- Desplegar -->
+        <div id="section-deploy" class="section hidden">
+          <h2 class="text-4xl font-bold mb-8">Desplegar Nuevo Bot</h2>
+          <div class="bg-gradient-to-br from-gray-900 to-slate-900 border border-purple-500/30 rounded-3xl p-10">
+            <!-- formulario igual pero con más color -->
+            <div class="grid gap-6">
+              <input id="bot-name" type="text" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400" placeholder="Nombre del bot">
+              <select id="bot-type" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400">
+                <option value="Telegram">Telegram Bot</option>
+                <option value="Discord">Discord Bot</option>
+                <option value="WhatsApp">WhatsApp Bot</option>
+                <option value="Custom">Node.js Custom</option>
+              </select>
+              <textarea id="bot-config" rows="8" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4" placeholder="Token o configuración..."></textarea>
+              <button onclick="deployBot()" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 py-5 rounded-2xl text-xl font-bold hover:scale-105 transition">🚀 Desplegar Ahora</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Consola -->
+        <div id="section-console" class="section hidden">
+          <h2 class="text-4xl font-bold mb-6">Consola en Vivo</h2>
+          <div id="console-output" class="terminal p-8 rounded-3xl h-[440px] overflow-auto text-emerald-300 text-sm whitespace-pre-wrap"></div>
+          <div class="mt-5 flex gap-3">
+            <input id="console-input" type="text" class="flex-1 bg-gray-900 border border-emerald-400/30 rounded-2xl px-6 py-4 focus:border-emerald-400" placeholder="Escribe un comando...">
+            <button onclick="runCommand()" class="px-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl font-bold">Enviar</button>
+          </div>
+        </div>
+
+        <!-- Aquí va tu dashboard arriba -->
+  
+        <div id="console" class="bg-black text-green-400 p-4 h-64 overflow-y-auto"></div>
+
+          <input id="consoleInput"
+            class="w-full p-2 bg-gray-900 text-white"
+            placeholder="Escribe un comando...">
+
+        <!-- Stats -->
+        <div id="section-stats" class="section hidden">
+          <h2 class="text-4xl font-bold mb-8">Estadísticas</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-3xl p-8 text-center border border-blue-400/30">
+              <div class="text-6xl font-bold text-blue-400">14</div>
+              <div class="mt-3 text-gray-300">Bots Activos</div>
+            </div>
+            <div class="bg-gradient-to-br from-emerald-900 to-cyan-900 rounded-3xl p-8 text-center border border-emerald-400/30">
+              <div class="text-6xl font-bold text-emerald-400">12.8k</div>
+              <div class="mt-3 text-gray-300">Mensajes</div>
+            </div>
+            <div class="bg-gradient-to-br from-amber-900 to-yellow-900 rounded-3xl p-8 text-center border border-amber-400/30">
+              <div class="text-6xl font-bold text-amber-400">99.9%</div>
+              <div class="mt-3 text-gray-300">Uptime</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-900 to-pink-900 rounded-3xl p-8 text-center border border-purple-400/30">
+              <div class="text-6xl font-bold text-purple-400">64</div>
+              <div class="mt-3 text-gray-300">Usuarios</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN PRECIOS COMPLETA CON PAYPAL -->
+        
+        <section id="pricing" style="padding: 80px 20px; background: #0f0f0f; color: #fff; text-align: center;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Elige tu plan</h2>
+          <p style="color: #aaa; margin-bottom: 50px;">Empieza gratis y escala cuando crezcas</p>
+  
+          <div style="display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; max-width: 1000px; margin: 0 auto;">
+    
+        <!-- Plan Gratis -->
+    
+        <div style="background: #1a1a1a; padding: 40px 30px; border-radius: 15px; width: 300px; border: 1px solid #333;">
+          <h3 style="font-size: 1.8rem; margin-bottom: 10px;">Gratis</h3>
+          <p style="font-size: 2.8rem; font-weight: bold; margin: 20px 0;">$0<span style="font-size: 1rem; color: #aaa;">/mes</span></p>
+          <ul style="list-style: none; padding: 0; text-align: left; margin: 30px 0; line-height: 2;">
+            <li>✓ 1 Bot activo</li>
+            <li>✓ 512MB RAM</li>
+            <li>✓ 10GB tráfico mensual</li>
+            <li>✓ Logs de 24h</li>
+            <li>✓ Soporte por Discord</li>
+          </ul>
+          <a href="/signup" style="display: block; width: 100%; padding: 14px; background: #333; color: #fff; border: none; border-radius: 8px; text-decoration: none; font-weight: bold; box-sizing: border-box;">Empezar Gratis</a>
+        </div>
+
+        <!-- Plan Pro con PayPal -->
+      
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; border-radius: 15px; width: 300px; position: relative; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);">
+          <span style="position: absolute; top: -12px; right: 20px; background: #ffd700; color: #000; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">Más popular</span>
+          <h3 style="font-size: 1.8rem; margin-bottom: 10px;">Pro</h3>
+          <p style="font-size: 2.8rem; font-weight: bold; margin: 20px 0;">$15<span style="font-size: 1rem;">/mes</span></p>
+          <ul style="list-style: none; padding: 0; text-align: left; margin: 30px 0; line-height: 2;">
+            <li>✓ Bots ilimitados</li>
+            <li>✓ 4GB RAM</li>
+            <li>✓ 200GB tráfico mensual</li>
+            <li>✓ Logs ilimitados</li>
+            <li>✓ Soporte prioritario 24/7</li>
+            <li>✓ Consola web avanzada</li>
+          </ul>
+      
+          <!-- BOTÓN PAYPAL -->
+          
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+            <input type="hidden" name="cmd" value="_xclick">
+            <input type="hidden" name="business" value="l29472954@gmail.com">
+            <input type="hidden" name="item_name" value="BotHost - Plan Pro Mensual">
+            <input type="hidden" name="amount" value="15.00">
+            <input type="hidden" name="currency_code" value="USD">
+            <input type="hidden" name="return" value="https://bothost.com/gracias">
+        
+            <input type="submit" value="Pagar $15 con PayPal" 
+               style="width: 100%; padding: 14px; background: #fff; color: #667eea; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem;">
+          </form>
+        </div>
+
+  </div>
+</section>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-black py-10 text-center border-t border-blue-900">
+    <p>Creado con ❤️ por <strong class="text-cyan-400">Luis González</strong></p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // (El script es el mismo que la versión anterior, lo mantengo funcional)
+    let currentUser = null;
+    let bots = [];
+
+    function showLogin() {
+      document.getElementById('login-form').classList.remove('hidden');
+      document.getElementById('register-form').classList.add('hidden');
+    }
+    function showRegister() {
+      document.getElementById('login-form').classList.add('hidden');
+      document.getElementById('register-form').classList.remove('hidden');
+    }
+    function register() {
+      const user = document.getElementById('reg-user').value.trim();
+      const pass = document.getElementById('reg-pass').value.trim();
+      if (!user || !pass) return alert("Usuario y contraseña son obligatorios");
+      
+      localStorage.setItem('botHost_user', JSON.stringify({ user, pass }));
+      alert("✅ Registro exitoso! Ahora puedes iniciar sesión.");
+      showLogin();
+    }
+    function login() {
+      const user = document.getElementById('login-user').value.trim();
+      const pass = document.getElementById('login-pass').value.trim();
+      
+      const saved = JSON.parse(localStorage.getItem('botHost_user'));
+
+      document.getElementById("nav-menu").classList.remove("hidden");
+
+      if (
+        saved &&
+        user === saved.user &&
+        pass === saved.pass
+      ) {
+        currentUser = user;
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        document.getElementById('welcome-name').textContent = user;
+        document.getElementById("username-display").textContent = user;
+        document.getElementById('user-info').classList.remove('hidden');
+        document.getElementById('btn-logout').classList.remove('hidden');
+        loadBots();
+        showSection('bots');
+      } else {
+        alert("❌ Usuario o contraseña incorrectos");
+      }
+    }
+    function logout() {
+      document.getElementById("nav-menu").classList.add("hidden");
+      if (confirm("¿Cerrar sesión?")) {
+        currentUser = null;
+        document.getElementById('dashboard').classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('user-info').classList.add('hidden');
+        document.getElementById('btn-logout').classList.add('hidden');
+      }    
+    }
+    // Si no hay datos o el JSON es inválido, usa los valores por defecto.
+    function loadBots() {
+      try {
+        const saved = localStorage.getItem('botHost_bots');
+        bots = saved ? JSON.parse(saved) : [
+          {
+            id: 1,
+            name: "MiPrimerBot",
+            type: "Telegram",
+            status: "✅ Online",
+            logs: []
+          }
+        ];
+      } catch (err) {
+         bots = [
+          {
+            id: 1,
+            name: "MiPrimerBot",
+            type: "Telegram",
+            status: "✅ Online",
+            logs: []
+          }
+        ];
+      }
+      renderBots();
+    }
+    function saveBots() {
+      localStorage.setItem('botHost_bots', JSON.stringify(bots));
+    }
+    function renderBots() {
+      const container = document.getElementById('bots-list');
+      container.innerHTML = bots.map(bot => `
+        <div class="bg-gray-900 border border-gray-700 hover:border-blue-500 rounded-3xl p-6 transition">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-bold text-xl">${bot.name}</h3>
+              <p class="text-gray-400">${bot.type}</p>
+            </div>
+            <span class="text-sm ${ bot.status.includes('Online') ? 'text-green-400' : 'text-yellow-400' }"> ${bot.status} </span>
+          </div>
+          <div class="mt-6 flex gap-3">
+            <button onclick="toggleBot(${bot.id})" class="flex-1 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700">Toggle</button>
+            <button onclick="openConsole(${bot.id})" class="flex-1 py-3 rounded-2xl bg-gray-700 hover:bg-gray-600">Consola</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    function deployBot() {
+      const name = document.getElementById('bot-name').value || "NuevoBot";
+      const type = document.getElementById('bot-type').value;
+      
+      const newBot = {
+        id: Date.now(),
+        name: name,
+        type: type,
+        status: "✅ Online",
+        logs: [`[${new Date().toLocaleTimeString()}] Bot ${name} desplegado`]
+      };
+      
+      bots.push(newBot);
+      saveBots();
+      renderBots();
+      alert(`🚀 Bot "${name}" desplegado correctamente!`);
+      showSection('bots');
+    }
+    function toggleBot(id) {
+      const bot = bots.find(b => b.id === id);
+      if (bot) {
+        bot.status = bot.status.includes('Online') ? "⏸️ Pausado" : "✅ Online";
+        saveBots();
+        renderBots();
+      }
+    }
+    function showSection(section) {
+      document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(`section-${section}`).classList.remove('hidden');
+    }
+
+    window.onload = () => {
+      const savedUser = localStorage.getItem('botHost_user');
+      if (savedUser) {
+        // Puedes auto-login si quieres
+      }
+    };
+  </script>
+</body>
+</html>
