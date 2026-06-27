@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BotHost Beta 2.0</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; }
+    .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); }
+    .card { transition: 0.3s; }
+    .card:hover { transform: translateY(-6px) scale(1.02); }
+    .glow { box-shadow: 0 0 25px rgba(99,102,241,0.3); }
+  </style>
+</head>
+
+<body class="bg-gray-950 text-white">
+
+<!-- TOP BAR -->
+<nav class="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 border-b border-indigo-500/30 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+  
+  <h1 class="text-2xl font-bold text-cyan-400">
+    🤖 BotHost Beta 2.0
+  </h1>
+
+  <div class="flex gap-4 items-center">
+    <span id="userName" class="text-gray-300"></span>
+    <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-xl hover:bg-red-600">
+      Salir
+    </button>
+  </div>
+
+</nav>
+
+<!-- MAIN -->
+<div class="flex">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 min-h-screen bg-gray-900 border-r border-gray-800 p-5 space-y-3">
+
+    <button onclick="showSection('dashboard')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      📊 Dashboard
+    </button>
+
+    <button onclick="showSection('bots')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      🤖 Mis Bots
+    </button>
+
+    <button onclick="showSection('deploy')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      🚀 Desplegar
+    </button>
+
+    <button onclick="showSection('console')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      💻 Consola
+    </button>
+
+    <button onclick="showSection('profile')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      👤 Perfil
+    </button>
+
+    <button onclick="showSection('help')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      📚 Ayuda
+    </button>
+
+    <button onclick="showSection('settings')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      ⚙️ Configuración
+    </button>
+
+    <button onclick="showSection('news')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-600/20">
+      📢 Novedades
+    </button>
+
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="flex-1 p-8 space-y-8">
+
+    <!-- DASHBOARD -->
+    <section id="section-dashboard">
+
+      <h2 class="text-4xl font-bold mb-4">Bienvenido a BotHost</h2>
+      <p class="text-gray-400">Panel de control estilo hosting profesional</p>
+
+      <div class="grid grid-cols-4 gap-4 mt-8">
+
+        <div class="bg-gray-900 p-6 rounded-2xl card glow">
+          <h3 class="text-gray-400">Bots activos</h3>
+          <p class="text-3xl font-bold text-cyan-400">0</p>
+        </div>
+
+        <div class="bg-gray-900 p-6 rounded-2xl card glow">
+          <h3 class="text-gray-400">Mensajes</h3>
+          <p class="text-3xl font-bold text-purple-400">0</p>
+        </div>
+
+        <div class="bg-gray-900 p-6 rounded-2xl card glow">
+          <h3 class="text-gray-400">Uptime</h3>
+          <p class="text-3xl font-bold text-green-400">100%</p>
+        </div>
+
+        <div class="bg-gray-900 p-6 rounded-2xl card glow">
+          <h3 class="text-gray-400">Usuarios</h3>
+          <p class="text-3xl font-bold text-pink-400">1</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- BOTS -->
+    <section id="section-bots" class="hidden">
+      <h2 class="text-3xl font-bold mb-4">🤖 Mis Bots</h2>
+      <div id="botsList" class="grid md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- DEPLOY -->
+    <section id="section-deploy" class="hidden">
+      <h2 class="text-3xl font-bold mb-4">🚀 Desplegar Bot</h2>
+
+      <div class="bg-gray-900 p-6 rounded-2xl space-y-4">
+
+        <input id="botName" class="w-full p-3 rounded-xl bg-gray-800" placeholder="Nombre del bot">
+
+        <select id="botType" class="w-full p-3 rounded-xl bg-gray-800">
+          <option>Discord</option>
+          <option>Telegram</option>
+          <option>WhatsApp</option>
+          <option>Custom</option>
+        </select>
+
+        <button onclick="createBot()" class="bg-gradient-to-r from-indigo-500 to-cyan-500 px-6 py-3 rounded-xl w-full">
+          Crear Bot
+        </button>
+
+      </div>
+    </section>
+
+    <!-- CONSOLE -->
+    <section id="section-console" class="hidden">
+      <h2 class="text-3xl font-bold mb-4">💻 Consola</h2>
+
+      <div id="console" class="bg-black p-4 h-80 overflow-auto rounded-xl text-green-400"></div>
+
+      <input id="cmd" class="w-full mt-4 p-3 bg-gray-800 rounded-xl" placeholder="Escribe comando...">
+    </section>
+
+    <!-- PROFILE -->
+    <section id="section-profile" class="hidden">
+      <h2 class="text-3xl font-bold mb-4">👤 Perfil</h2>
+
+      <div class="bg-gray-900 p-6 rounded-2xl space-y-4">
+
+        <input id="profileName" class="w-full p-3 rounded-xl bg-gray-800" placeholder="Nombre">
+
+        <textarea id="profileBio" class="w-full p-3 rounded-xl bg-gray-800" placeholder="Biografía"></textarea>
+
+        <button onclick="saveProfile()" class="bg-cyan-500 px-6 py-3 rounded-xl w-full">
+          Guardar perfil
+        </button>
+
+      </div>
+    </section>
+
+    <!-- HELP -->
+    <section id="section-help" class="hidden">
+      <h2 class="text-3xl font-bold mb-4">📚 Ayuda</h2>
+
+      <div class="bg-gray-900 p-6 rounded-2xl text-gray-300">
+        <p>• Un bot es un programa automático</p>
+        <p>• Puedes desplegar bots desde el panel</p>
+        <p>• Usa la consola para ver logs</p>
+        <p>• Guarda tu configuración en perfil</p>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="section-settings" class="hidden">
+      <h2 class="text-3xl font-bold mb-4">⚙️ Configuración</h2>
+
+      <div class="bg-gray-900 p-6 rounded-2xl">
+        <p class="text-gray-400">Próximamente: temas y personalización</p>
+      </div>
+    </section>
+
+    <!-- NEWS -->
+    <section id="section-news" class="hidden">
+      <h2 class="text-3xl font-bold mb-4">📢 Novedades</h2>
+
+      <div class="bg-gray-900 p-6 rounded-2xl text-gray-300">
+        <p>🆕 Beta 2.0 lanzada</p>
+        <p>✨ Nuevo panel estilo hosting</p>
+        <p>🤖 Sistema de bots mejorado</p>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+  // =========================
+  // UTILIDADES
+  // =========================
+
+  let bots = JSON.parse(localStorage.getItem("bots")) || [];
+
+  document.getElementById("userName").innerText =
+    localStorage.getItem("profileName") || "Usuario";
+
+  function showSection(section) {
+    const sections = document.querySelectorAll("main section");
+    sections.forEach(s => s.classList.add("hidden"));
+
+    document.getElementById("section-" + section).classList.remove("hidden");
+  }
+
+  function logout() {
+    alert("Sesión cerrada");
+    localStorage.clear();
+    location.reload();
+  }
+
+  // =========================
+  // BOTS
+  // =========================
+
+  function createBot() {
+    const name = document.getElementById("botName").value;
+    const type = document.getElementById("botType").value;
+
+    if (!name) return alert("Escribe un nombre");
+
+    const bot = {
+      id: Date.now(),
+      name,
+      type,
+      status: "activo"
+    };
+
+    bots.push(bot);
+    localStorage.setItem("bots", JSON.stringify(bots));
+
+    document.getElementById("botName").value = "";
+
+    logConsole(`🤖 Bot creado: ${name} (${type})`);
+    renderBots();
+  }
+
+  function renderBots() {
+    const container = document.getElementById("botsList");
+    container.innerHTML = "";
+
+    bots.forEach(bot => {
+      container.innerHTML += `
+        <div class="bg-gray-900 p-5 rounded-xl card glow">
+          <h3 class="text-xl font-bold text-cyan-400">${bot.name}</h3>
+          <p class="text-gray-400">Tipo: ${bot.type}</p>
+          <p class="text-green-400">Estado: ${bot.status}</p>
+
+          <button onclick="deleteBot(${bot.id})"
+            class="mt-3 bg-red-500 px-4 py-2 rounded-xl">
+            Eliminar
+          </button>
+        </div>
+      `;
+    });
+  }
+
+  function deleteBot(id) {
+    bots = bots.filter(b => b.id !== id);
+    localStorage.setItem("bots", JSON.stringify(bots));
+    renderBots();
+    logConsole("🗑️ Bot eliminado");
+  }
+
+  // =========================
+  // CONSOLA
+  // =========================
+
+  function logConsole(msg) {
+    const consoleDiv = document.getElementById("console");
+    consoleDiv.innerHTML += `<div>> ${msg}</div>`;
+    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+  }
+
+  document.getElementById("cmd").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      const cmd = this.value;
+      this.value = "";
+
+      logConsole("💻 " + cmd);
+
+      if (cmd === "help") {
+        logConsole(`
+          Comandos disponibles:<br><br>
+
+          help &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Ayuda<br>
+          bots &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Bots activos<br>
+          clear, cls &nbsp; - Limpia la consola<br>
+          date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Fecha y hora<br>
+          time &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Hora actual<br>
+        `);
+      }
+      else if (cmd === "bots") {
+        logConsole("Bots activos: " + bots.length);
+      }
+      else if (cmd === "clear" || cmd === "cls") {
+        document.getElementById("console").innerHTML = "";
+      }
+      else if (cmd === "date") {
+        logConsole(new Date().toLocaleString());
+      }
+      else if (cmd === "time") {
+        logConsole(new Date().toLocaleTimeString());
+      }
+      else {
+        logConsole("Comando no reconocido.");
+      }
+    }
+  });
+
+  // =========================
+  // PERFIL
+  // =========================
+
+  function saveProfile() {
+    const name = document.getElementById("profileName").value;
+    const bio = document.getElementById("profileBio").value;
+
+    localStorage.setItem("profileName", name);
+    localStorage.setItem("profileBio", bio);
+
+    document.getElementById("userName").innerText = name;
+
+    alert("Perfil guardado");
+  }
+
+  // =========================
+  // INICIO
+  // =========================
+
+  renderBots();
+
+  // =========================
+  // MEJORAS GENERALES UI
+  // =========================
+
+  function setActiveButton() {
+    const buttons = document.querySelectorAll("aside button");
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("bg-indigo-600/30"));
+        btn.classList.add("bg-indigo-600/30");
+      });
+    });
+  }
+
+  setActiveButton();
+
+  // =========================
+  // SIMULACIÓN DE ESTADO DE BOTS
+  // =========================
+
+  function toggleBotStatus(id) {
+    bots = bots.map(b => {
+      if (b.id === id) {
+        b.status = b.status === "activo" ? "detenido" : "activo";
+      }
+      return b;
+    });
+
+    localStorage.setItem("bots", JSON.stringify(bots));
+    renderBots();
+    logConsole("🔄 Estado de bot actualizado");
+  }
+
+  // actualizar renderBots para incluir botón toggle
+  const oldRenderBots = renderBots;
+
+  renderBots = function () {
+    const container = document.getElementById("botsList");
+    container.innerHTML = "";
+
+    bots.forEach(bot => {
+      container.innerHTML += `
+        <div class="bg-gray-900 p-5 rounded-xl card glow">
+          <h3 class="text-xl font-bold text-cyan-400">${bot.name}</h3>
+          <p class="text-gray-400">Tipo: ${bot.type}</p>
+          <p class="${bot.status === "activo" ? "text-green-400" : "text-red-400"}">
+            Estado: ${bot.status}
+          </p>
+
+          <div class="flex gap-2 mt-3">
+            <button onclick="toggleBotStatus(${bot.id})"
+              class="bg-yellow-500 px-4 py-2 rounded-xl">
+              Toggle
+            </button>
+
+            <button onclick="deleteBot(${bot.id})"
+              class="bg-red-500 px-4 py-2 rounded-xl">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      `;
+    });
+  };
+
+  renderBots();
+
+  // =========================
+  // AUTO-SAVE PERFIL VISUAL
+  // =========================
+
+  const profileName = document.getElementById("profileName");
+  const profileBio = document.getElementById("profileBio");
+
+  if (localStorage.getItem("profileName")) {
+    profileName.value = localStorage.getItem("profileName");
+  }
+
+  if (localStorage.getItem("profileBio")) {
+    profileBio.value = localStorage.getItem("profileBio");
+  }
+
+  // =========================
+  // DASHBOARD DINÁMICO
+  // =========================
+
+  function updateDashboard() {
+    const activeBots = bots.filter(b => b.status === "activo").length;
+
+    document.querySelectorAll(".text-3xl")[0].innerText = activeBots;
+    document.querySelectorAll(".text-3xl")[1].innerText = bots.length * 12;
+  }
+
+  setInterval(updateDashboard, 2000);
+
+  // =========================
+  // BOOT MESSAGE
+  // =========================
+
+  logConsole("🚀 BotHost iniciado correctamente");
+</script>
+</body>
+</html>
