@@ -1,5 +1,9 @@
 import { supabase } from "./src/supabase.js";
 
+const { data, error } = await supabase
+    .from("user_data")
+    .select("*");
+
 const consoleBox = document.getElementById("console");
 const consoleInput = document.getElementById("consoleInput");
 
