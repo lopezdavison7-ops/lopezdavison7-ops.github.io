@@ -1,3 +1,5 @@
+import { supabase } from "./src/supabase.js";
+
 const consoleBox = document.getElementById("console");
 const consoleInput = document.getElementById("consoleInput");
 
