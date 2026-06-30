@@ -1,13 +1,8 @@
-// (El script es el mismo que la versión anterior, lo mantengo funcional)
-
+// (El script es el mismo que la versión anterior, se mantengo funcional)
 import { supabase } from "./src/supabase.js";
 
     let currentUser = null;
     let bots = [];
-
-const { data, error } = await supabase
-    .from("user_data")
-    .select("*");
 
 const consoleBox = document.getElementById("console");
 const consoleInput = document.getElementById("consoleInput");
@@ -73,41 +68,120 @@ function showRegister() {
   document.getElementById('register-form').classList.remove('hidden');
 }
 
-function register() {
-  const user = document.getElementById('reg-user').value.trim();
-  const pass = document.getElementById('reg-pass').value.trim();
-  if (!user || !pass) return alert("Usuario y contraseña son obligatorios");
-      
-  localStorage.setItem('botHost_user', JSON.stringify({ user, pass }));
-  alert("✅ Registro exitoso! Ahora puedes iniciar sesión.");
-  showLogin();
+async function register() {
+    const username = document.getElementById("reg-user").value.trim();
+    const email = document.getElementById("reg-email").value.trim();
+    const pass = document.getElementById("reg-pass").value.trim();
+
+    if (!username || !email || !pass) {
+        return alert("Usuario, correo y contraseña son obligatorios.");
+    }
+
+    // Verificar si el usuario o correo ya existen
+    const { data: exists, error: checkError } = await supabase
+        .from("user_data")
+        .select("id")
+        .or(`username.eq.${username},email.eq.${email}`);
+
+    if (checkError) {
+        console.error(checkError);
+        return alert("Error al verificar los datos.");
+    }
+
+    if (exists.length > 0) {
+        return alert("El usuario o el correo ya están registrados.");
+    }
+
+    // Registrar usuario
+    const { error } = await supabase
+        .from("user_data")
+        .insert({
+            username,
+            email,
+            pass
+        });
+
+    if (error) {
+        console.error(error);
+        return alert("Error al registrar: " + error.message);
+    }
+
+    alert("✅ Registro exitoso.");
+    showLogin();
+}
+
+async function deleteAccount() {
+    if (!currentUser) {
+        return alert("No hay ninguna sesión iniciada.");
+    }
+
+    if (!confirm("¿Seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer.")) {
+        return;
+    }
+
+    const { error } = await supabase
+        .from("user_data")
+        .delete()
+        .eq("id", currentUser.id);
+
+    if (error) {
+        console.error(error);
+        return alert("Error al eliminar la cuenta: " + error.message);
+    }
+
+    alert("✅ Cuenta eliminada correctamente.");
+
+    currentUser = null;
+
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("auth-screen").classList.remove("hidden");
+    document.getElementById("nav-menu").classList.add("hidden");
+    document.getElementById("user-info").classList.add("hidden");
+    document.getElementById("btn-logout").classList.add("hidden");
 }
     
-function login() {
-  const user = document.getElementById('login-user').value.trim();
-  const pass = document.getElementById('login-pass').value.trim();
-      
-  const saved = JSON.parse(localStorage.getItem('botHost_user'));
+async function login() {
+    const login = document.getElementById("login-user").value.trim();
+    const pass = document.getElementById("login-pass").value.trim();
 
-  document.getElementById("nav-menu").classList.remove("hidden");
+    if (!login || !pass) {
+        return alert("Ingresa tu usuario o correo y tu contraseña.");
+    }
 
-  if (
-    saved &&
-    user === saved.user &&
-    pass === saved.pass
-  ) {
-    currentUser = user;
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('welcome-name').textContent = user;
-    document.getElementById("username-display").textContent = user;
-    document.getElementById('user-info').classList.remove('hidden');
-    document.getElementById('btn-logout').classList.remove('hidden');
+    const { data, error } = await supabase
+        .from("user_data")
+        .select("id, username, email, pass, created_at")
+        .or(`username.eq.${login},email.eq.${login}`)
+        .single();
+
+    if (error || !data) {
+        return alert("❌ Usuario o correo no encontrado.");
+    }
+
+    if (data.pass !== pass) {
+        return alert("❌ Contraseña incorrecta.");
+    }
+
+    // Guardar solo la información necesaria
+    currentUser = {
+        id: data.id,
+        username: data.username,
+        email: data.email
+    };
+
+    document.getElementById("nav-menu").classList.remove("hidden");
+
+    document.getElementById("auth-screen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+
+    document.getElementById("welcome-name").textContent = data.username;
+    document.getElementById("username-display").textContent = data.username;
+
+    document.getElementById("user-info").classList.remove("hidden");
+    document.getElementById("btn-logout").classList.remove("hidden");
+
     loadBots();
-    showSection('bots');
-  } else {
-    alert("❌ Usuario o contraseña incorrectos");
-  }
+    showSection("bots");
 }
     
 function logout() {
