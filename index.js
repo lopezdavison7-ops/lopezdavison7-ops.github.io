@@ -210,3 +210,13 @@ window.onload = () => {
     // Puedes auto-login si quieres
   }
 };
+
+window.showLogin = showLogin;
+window.showRegister = showRegister;
+window.register = register;
+window.login = login;
+window.logout = logout;
+window.showSection = showSection;
+window.deployBot = deployBot;
+window.toggleBot = toggleBot;
+window.runCommand = runCommand;
