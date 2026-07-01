@@ -55,6 +55,9 @@ time        - Hora actual`);
         break;
 
     // otros comandos aquí...
+    
+    default:
+        logConsole(`Comando desconocido: ${command}`);
   }
 }
     
@@ -77,6 +80,13 @@ async function register() {
         return alert("Usuario, correo y contraseña son obligatorios.");
     }
 
+    // Validar formato del correo
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+        return alert("Ingresa un correo electrónico válido.");
+    }
+
     // Verificar si el usuario o correo ya existen
     const { data: exists, error: checkError } = await supabase
         .from("user_data")
@@ -88,7 +98,7 @@ async function register() {
         return alert("Error al verificar los datos.");
     }
 
-    if (exists.length > 0) {
+    if (exists?.length) {
         return alert("El usuario o el correo ya están registrados.");
     }
 
@@ -107,6 +117,29 @@ async function register() {
     }
 
     alert("✅ Registro exitoso.");
+    showLogin();
+}
+
+function resetUI() {
+    currentUser = null;
+
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("auth-screen").classList.remove("hidden");
+
+    document.getElementById("nav-menu").classList.add("hidden");
+    document.getElementById("user-info").classList.add("hidden");
+    document.getElementById("btn-logout").classList.add("hidden");
+
+    document.getElementById("login-user").value = "";
+    document.getElementById("login-pass").value = "";
+
+    document.getElementById("reg-user").value = "";
+    document.getElementById("reg-email").value = "";
+    document.getElementById("reg-pass").value = "";
+
+    bots = [];
+    renderBots();
+
     showLogin();
 }
 
@@ -130,14 +163,7 @@ async function deleteAccount() {
     }
 
     alert("✅ Cuenta eliminada correctamente.");
-
-    currentUser = null;
-
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("auth-screen").classList.remove("hidden");
-    document.getElementById("nav-menu").classList.add("hidden");
-    document.getElementById("user-info").classList.add("hidden");
-    document.getElementById("btn-logout").classList.add("hidden");
+    resetUI();
 }
     
 async function login() {
@@ -180,19 +206,14 @@ async function login() {
     document.getElementById("user-info").classList.remove("hidden");
     document.getElementById("btn-logout").classList.remove("hidden");
 
-    loadBots();
+    await loadBots();
     showSection("bots");
 }
     
 function logout() {
-  document.getElementById("nav-menu").classList.add("hidden");
-  if (confirm("¿Cerrar sesión?")) {
-    currentUser = null;
-    document.getElementById('dashboard').classList.add('hidden');
-    document.getElementById('auth-screen').classList.remove('hidden');
-    document.getElementById('user-info').classList.add('hidden');
-    document.getElementById('btn-logout').classList.add('hidden');
-  }    
+    if (!confirm("¿Cerrar sesión?")) return;
+
+    resetUI();
 }
 
 // Si no hay datos o el JSON es inválido, usa los valores por defecto.
@@ -278,13 +299,6 @@ function showSection(section) {
   document.getElementById(`section-${section}`).classList.remove('hidden');
 }
 
-window.onload = () => {
-  const savedUser = localStorage.getItem('botHost_user');
-  if (savedUser) {
-    // Puedes auto-login si quieres
-  }
-};
-
 window.showLogin = showLogin;
 window.showRegister = showRegister;
 window.register = register;
@@ -294,3 +308,4 @@ window.showSection = showSection;
 window.deployBot = deployBot;
 window.toggleBot = toggleBot;
 window.runCommand = runCommand;
+window.deleteAccount = deleteAccount;
