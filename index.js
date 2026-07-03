@@ -167,32 +167,64 @@ async function deleteAccount() {
 }
     
 async function login() {
-    const login = document.getElementById("login-user").value.trim();
+
+    let login = document.getElementById("login-user").value.trim();
     const pass = document.getElementById("login-pass").value.trim();
 
     if (!login || !pass) {
         return alert("Ingresa tu usuario o correo y tu contraseña.");
     }
 
-    const { data, error } = await supabase
-        .from("user_data")
-        .select("id, username, email, pass, created_at")
-        .or(`username.eq.${login},email.eq.${login}`)
-        .single();
+    // Si escribió un usuario, obtener su correo
+    if (!login.includes("@")) {
 
-    if (error || !data) {
-        return alert("❌ Usuario o correo no encontrado.");
+        const { data: profile, error } = await supabase
+            .from("user_data")
+            .select("email")
+            .eq("username", login)
+            .single();
+
+        if (error || !profile) {
+            return alert("❌ Usuario no encontrado.");
+        }
+
+        login = profile.email;
     }
 
-    if (data.pass !== pass) {
-        return alert("❌ Contraseña incorrecta.");
+    // Login con Supabase Auth
+    const { error: authError } =
+        await supabase.auth.signInWithPassword({
+            email: login,
+            password: pass
+        });
+
+    if (authError) {
+        console.error(authError);
+        return alert("❌ Usuario o contraseña incorrectos.");
     }
 
-    // Guardar solo la información necesaria
+    // Usuario autenticado
+    const {
+        data: { user }
+    } = await supabase.auth.getUser();
+
+    // Obtener información adicional
+    const { data: profile, error: profileError } =
+        await supabase
+            .from("user_data")
+            .select("username,email")
+            .eq("id", user.id)
+            .single();
+
+    if (profileError) {
+        console.error(profileError);
+        return alert("No se pudo cargar el perfil.");
+    }
+
     currentUser = {
-        id: data.id,
-        username: data.username,
-        email: data.email
+        id: user.id,
+        username: profile.username,
+        email: profile.email
     };
 
     document.getElementById("nav-menu").classList.remove("hidden");
@@ -200,13 +232,14 @@ async function login() {
     document.getElementById("auth-screen").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
 
-    document.getElementById("welcome-name").textContent = data.username;
-    document.getElementById("username-display").textContent = data.username;
+    document.getElementById("welcome-name").textContent = currentUser.username;
+    document.getElementById("username-display").textContent = currentUser.username;
 
     document.getElementById("user-info").classList.remove("hidden");
     document.getElementById("btn-logout").classList.remove("hidden");
 
     await loadBots();
+
     showSection("bots");
 }
     
