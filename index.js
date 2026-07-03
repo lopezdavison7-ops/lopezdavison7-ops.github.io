@@ -118,6 +118,9 @@ async function register() {
 
 function resetUI() {
     currentUser = null;
+    bots = [];
+
+    renderBots();
 
     document.getElementById("dashboard").classList.add("hidden");
     document.getElementById("auth-screen").classList.remove("hidden");
@@ -133,32 +136,46 @@ function resetUI() {
     document.getElementById("reg-email").value = "";
     document.getElementById("reg-pass").value = "";
 
-    bots = [];
-    renderBots();
-
     showLogin();
 }
 
 async function deleteAccount() {
+
     if (!currentUser) {
-        return alert("No hay ninguna sesión iniciada.");
+        return alert("No hay una sesión iniciada.");
     }
 
     if (!confirm("¿Seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer.")) {
         return;
     }
 
-    const { error } = await supabase
+    // Eliminar bots
+    const { error: botsError } = await supabase
+        .from("bots")
+        .delete()
+        .eq("user_id", currentUser.id);
+
+    if (botsError) {
+        console.error(botsError);
+        return alert("No se pudieron eliminar los bots.");
+    }
+
+    // Eliminar perfil
+    const { error: profileError } = await supabase
         .from("user_data")
         .delete()
         .eq("id", currentUser.id);
 
-    if (error) {
-        console.error(error);
-        return alert("Error al eliminar la cuenta: " + error.message);
+    if (profileError) {
+        console.error(profileError);
+        return alert("No se pudo eliminar el perfil.");
     }
 
-    alert("✅ Cuenta eliminada correctamente.");
+    // Cerrar sesión
+    await supabase.auth.signOut();
+
+    alert("✅ Cuenta eliminada.");
+
     resetUI();
 }
     
@@ -239,37 +256,42 @@ async function login() {
     showSection("bots");
 }
     
-function logout() {
+async function logout() {
+
     if (!confirm("¿Cerrar sesión?")) return;
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+        console.error(error);
+        return alert("No se pudo cerrar la sesión.");
+    }
 
     resetUI();
 }
 
-// Si no hay datos o el JSON es inválido, usa los valores por defecto.
-function loadBots() {
-  try {
-    const saved = localStorage.getItem('botHost_bots');
-    bots = saved ? JSON.parse(saved) : [
-      {
-        id: 1,
-        name: "MiPrimerBot",
-        type: "Telegram",
-        status: "✅ Online",
-        logs: []
-      }
-    ];
-  } catch (err) {
-    bots = [
-      {
-        id: 1,
-        name: "MiPrimerBot",
-        type: "Telegram",
-        status: "✅ Online",
-        logs: []
-      }
-    ];
-  }
-  renderBots();
+async function loadBots() {
+
+    if (!currentUser) {
+        bots = [];
+        renderBots();
+        return;
+    }
+
+    const { data, error } = await supabase
+        .from("bots")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error(error);
+        return alert("No se pudieron cargar los bots.");
+    }
+
+    bots = data ?? [];
+
+    renderBots();
 }
     
 function saveBots() {
