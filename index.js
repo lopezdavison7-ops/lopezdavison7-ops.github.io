@@ -77,31 +77,10 @@ async function register() {
     const pass = document.getElementById("reg-pass").value.trim();
 
     if (!username || !email || !pass) {
-        return alert("Usuario, correo y contraseña son obligatorios.");
+        return alert("Completa todos los campos.");
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) {
-        return alert("Correo electrónico inválido.");
-    }
-
-    // Verificar si ya existe el usuario
-    const { data: exists, error: checkError } = await supabase
-        .from("user_data")
-        .select("id")
-        .or(`username.eq.${username},email.eq.${email}`);
-
-    if (checkError) {
-        console.error(checkError);
-        return alert("Error al verificar los datos.");
-    }
-
-    if (exists.length > 0) {
-        return alert("El usuario o correo ya existen.");
-    }
-
-    // Crear usuario en Auth
+    // Crear usuario en Authentication
     const { data, error: authError } = await supabase.auth.signUp({
         email,
         password: pass
@@ -112,25 +91,23 @@ async function register() {
         return alert(authError.message);
     }
 
-    if (!data.user) {
-        return alert("No fue posible crear la cuenta.");
+    const user = data.user;
+
+    if (!user) {
+        return alert("No se pudo crear la cuenta.");
     }
 
     // Guardar perfil
     const { error: profileError } = await supabase
         .from("user_data")
         .insert({
-            id: data.user.id,
+            id: user.id,
             username,
             email
         });
 
     if (profileError) {
         console.error(profileError);
-
-        // Si falla el perfil elimina el usuario Auth
-        await supabase.auth.signOut();
-
         return alert(profileError.message);
     }
 
