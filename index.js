@@ -294,10 +294,6 @@ async function loadBots() {
     renderBots();
 }
     
-function saveBots() {
-  localStorage.setItem('botHost_bots', JSON.stringify(bots));
-}
-    
 function renderBots() {
   const container = document.getElementById('bots-list');
   container.innerHTML = bots.map(bot => `
@@ -317,32 +313,70 @@ function renderBots() {
   `).join('');
 }
     
-function deployBot() {
-  const name = document.getElementById('bot-name').value || "NuevoBot";
-  const type = document.getElementById('bot-type').value;
-      
-  const newBot = {
-    id: Date.now(),
-    name: name,
-    type: type,
-    status: "✅ Online",
-    logs: [`[${new Date().toLocaleTimeString()}] Bot ${name} desplegado`]
-  };
-      
-  bots.push(newBot);
-  saveBots();
-  renderBots();
-  alert(`🚀 Bot "${name}" desplegado correctamente!`);
-  showSection('bots');
+async function deployBot() {
+
+    if (!currentUser) {
+        return alert("Debes iniciar sesión.");
+    }
+
+    const name = document.getElementById("bot-name").value.trim() || "NuevoBot";
+    const type = document.getElementById("bot-type").value;
+
+    const { error } = await supabase
+        .from("bots")
+        .insert({
+            user_id: currentUser.id,
+            name,
+            type,
+            status: "✅ Online",
+            logs: [
+                `[${new Date().toLocaleTimeString()}] Bot ${name} desplegado`
+            ]
+        });
+
+    if (error) {
+        console.error(error);
+        return alert("No se pudo crear el bot.");
+    }
+
+    await loadBots();
+
+    alert(`🚀 Bot "${name}" desplegado correctamente.`);
+
+    showSection("bots");
 }
     
-function toggleBot(id) {
-  const bot = bots.find(b => b.id === id);
-  if (bot) {
-    bot.status = bot.status.includes('Online') ? "⏸️ Pausado" : "✅ Online";
-    saveBots();
-    renderBots();
-  }
+async function toggleBot(id) {
+
+    const bot = bots.find(b => b.id === id);
+
+    if (!bot) return;
+
+    const newStatus =
+        bot.status === "✅ Online"
+            ? "⏸️ Pausado"
+            : "✅ Online";
+
+    const logs = [
+        ...(bot.logs || []),
+        `[${new Date().toLocaleTimeString()}] Estado cambiado a ${newStatus}`
+    ];
+
+    const { error } = await supabase
+        .from("bots")
+        .update({
+            status: newStatus,
+            logs
+        })
+        .eq("id", id)
+        .eq("user_id", currentUser.id);
+
+    if (error) {
+        console.error(error);
+        return alert("No se pudo actualizar el bot.");
+    }
+
+    await loadBots();
 }
     
 function showSection(section) {
