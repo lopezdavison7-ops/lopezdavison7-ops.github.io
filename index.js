@@ -191,10 +191,10 @@ async function login() {
     const pass = document.getElementById("login-pass").value.trim();
 
     if (!login || !pass) {
-        return alert("Ingresa tu usuario o correo y tu contraseña.");
+        return alert("Ingresa tu usuario o correo.");
     }
 
-    // Si escribió un usuario, obtener su correo
+    // Si escribió un usuario buscar su correo
     if (!login.includes("@")) {
 
         const { data: profile, error } = await supabase
@@ -204,13 +204,13 @@ async function login() {
             .single();
 
         if (error || !profile) {
-            return alert("❌ Usuario no encontrado.");
+            return alert("Usuario no encontrado.");
         }
 
         login = profile.email;
     }
 
-    // Login con Supabase Auth
+    // Login Auth
     const { error: authError } =
         await supabase.auth.signInWithPassword({
             email: login,
@@ -219,15 +219,15 @@ async function login() {
 
     if (authError) {
         console.error(authError);
-        return alert("❌ Usuario o contraseña incorrectos.");
+        return alert(authError.message);
     }
 
-    // Usuario autenticado
+    // Obtener usuario autenticado
     const {
         data: { user }
     } = await supabase.auth.getUser();
 
-    // Obtener información adicional
+    // Obtener perfil
     const { data: profile, error: profileError } =
         await supabase
             .from("user_data")
