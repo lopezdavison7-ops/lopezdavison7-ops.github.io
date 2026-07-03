@@ -80,14 +80,13 @@ async function register() {
         return alert("Usuario, correo y contraseña son obligatorios.");
     }
 
-    // Validar formato del correo
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
-        return alert("Ingresa un correo electrónico válido.");
+        return alert("Correo electrónico inválido.");
     }
 
-    // Verificar si el usuario o correo ya existen
+    // Verificar si ya existe el usuario
     const { data: exists, error: checkError } = await supabase
         .from("user_data")
         .select("id")
@@ -98,25 +97,45 @@ async function register() {
         return alert("Error al verificar los datos.");
     }
 
-    if (exists?.length) {
-        return alert("El usuario o el correo ya están registrados.");
+    if (exists.length > 0) {
+        return alert("El usuario o correo ya existen.");
     }
 
-    // Registrar usuario
-    const { error } = await supabase
+    // Crear usuario en Auth
+    const { data, error: authError } = await supabase.auth.signUp({
+        email,
+        password: pass
+    });
+
+    if (authError) {
+        console.error(authError);
+        return alert(authError.message);
+    }
+
+    if (!data.user) {
+        return alert("No fue posible crear la cuenta.");
+    }
+
+    // Guardar perfil
+    const { error: profileError } = await supabase
         .from("user_data")
         .insert({
+            id: data.user.id,
             username,
-            email,
-            pass
+            email
         });
 
-    if (error) {
-        console.error(error);
-        return alert("Error al registrar: " + error.message);
+    if (profileError) {
+        console.error(profileError);
+
+        // Si falla el perfil elimina el usuario Auth
+        await supabase.auth.signOut();
+
+        return alert(profileError.message);
     }
 
-    alert("✅ Registro exitoso.");
+    alert("✅ Cuenta creada correctamente.");
+
     showLogin();
 }
 
