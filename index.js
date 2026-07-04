@@ -3,63 +3,6 @@ import { supabase } from "./src/supabase.js";
 
     let currentUser = null;
     let bots = [];
-
-const consoleBox = document.getElementById("console");
-const consoleInput = document.getElementById("consoleInput");
-
-function logConsole(msg) {
-  consoleBox.innerHTML += `<div>${msg}</div>`;
-  consoleBox.scrollTop = consoleBox.scrollHeight;
-}
-
-consoleInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    const command = consoleInput.value.trim();
-    runCommand(command);
-    consoleInput.value = "";
-  }
-});
-
-function runCommand(cmd) {
-  const parts = cmd.split(" ");
-  const command = parts[0].toLowerCase();
-  const args = parts.slice(1);
-
-  switch (command) {
-
-    case "clear":
-    case "cls":
-      consoleBox.innerHTML = "";
-      break;
-
-    case "help":
-        logConsole(`Comandos disponibles:
-
-help        - Muestra esta ayuda
-bots        - Bots activos
-clear, cls  - Limpia la consola
-date        - Fecha y hora
-time        - Hora actual`);
-        break;
-
-    case "bots":
-        logConsole(`Bots activos: ${bots.length}`);
-        break;
-
-    case "date":
-        logConsole(new Date().toLocaleString());
-        break;
-
-    case "time":
-        logConsole(new Date().toLocaleTimeString());
-        break;
-
-    // otros comandos aquí...
-    
-    default:
-        logConsole(`Comando desconocido: ${command}`);
-  }
-}
     
 function showLogin() {
   document.getElementById('login-form').classList.remove('hidden');
@@ -322,14 +265,6 @@ async function deployBot() {
     const name = document.getElementById("bot-name").value.trim() || "NuevoBot";
     const type = document.getElementById("bot-type").value;
 
-    alert(JSON.stringify(currentUser, null, 2));
-
-    const {
-        data: { user }
-    } = await supabase.auth.getUser();
-
-    alert(JSON.stringify(user, null, 2));
-
     const { error } = await supabase
         .from("bots")
         .insert({
@@ -390,6 +325,63 @@ async function toggleBot(id) {
 function showSection(section) {
   document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
   document.getElementById(`section-${section}`).classList.remove('hidden');
+}
+
+const consoleBox = document.getElementById("console");
+const consoleInput = document.getElementById("consoleInput");
+
+function logConsole(msg) {
+  consoleBox.innerHTML += `<div>${msg}</div>`;
+  consoleBox.scrollTop = consoleBox.scrollHeight;
+}
+
+consoleInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    const command = consoleInput.value.trim();
+    runCommand(command);
+    consoleInput.value = "";
+  }
+});
+
+function runCommand(cmd) {
+  const parts = cmd.split(" ");
+  const command = parts[0].toLowerCase();
+  const args = parts.slice(1);
+
+  switch (command) {
+
+    case "clear":
+    case "cls":
+      consoleBox.innerHTML = "";
+      break;
+
+    case "help":
+        logConsole(`Comandos disponibles:
+
+help        - Muestra esta ayuda
+bots        - Bots activos
+clear, cls  - Limpia la consola
+date        - Fecha y hora
+time        - Hora actual`);
+        break;
+
+    case "bots":
+        logConsole(`Bots activos: ${bots.length}`);
+        break;
+
+    case "date":
+        logConsole(new Date().toLocaleString());
+        break;
+
+    case "time":
+        logConsole(new Date().toLocaleTimeString());
+        break;
+
+    // otros comandos aquí...
+    
+    default:
+        logConsole(`Comando desconocido: ${command}`);
+  }
 }
 
 window.showLogin = showLogin;
