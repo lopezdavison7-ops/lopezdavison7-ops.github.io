@@ -327,6 +327,32 @@ function showSection(section) {
   document.getElementById(`section-${section}`).classList.remove('hidden');
 }
 
+function openConsole(id) {
+
+    showSection("console");
+
+    const bot = bots.find(b => b.id === id);
+
+    if (!bot) return;
+
+    consoleBox.innerHTML = "";
+
+    logConsole(`Bot: ${bot.name}`);
+    logConsole(`Estado: ${bot.status}`);
+    logConsole("");
+
+    (bot.logs || []).forEach(log => logConsole(log));
+}
+
+function sendCommand() {
+    const input = document.getElementById("console-input");
+
+    runCommand(input.value);
+
+    input.value = "";
+    input.focus();
+}
+
 const consoleBox = document.getElementById("console-output");
 const consoleInput = document.getElementById("console-input");
 
@@ -398,6 +424,8 @@ window.logout = logout;
 window.showSection = showSection;
 window.deployBot = deployBot;
 window.toggleBot = toggleBot;
+window.openConsole = openConsole;
+window.sendCommand = sendCommand;
 window.runCommand = runCommand;
 window.deleteAccount = deleteAccount;
 
