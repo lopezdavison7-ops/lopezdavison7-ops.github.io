@@ -386,10 +386,13 @@ function runCommand(cmd = "") {
       consoleBox.innerHTML = "";
       logConsole("BotHost Console v1.0");
       logConsole("Escribe 'help' para ver los comandos.");
+      logConsole("/>");
       break;
 
     case "help":
-        logConsole(`Comandos disponibles:
+        logConsole(`/> help
+
+Comandos disponibles:
 
 help        - Muestra esta ayuda
 bots        - Bots activos
@@ -399,14 +402,22 @@ time        - Hora actual`);
         break;
 
     case "bots":
-        logConsole(`Bots activos: ${bots.length}`);
+        logConsole(`/> bots
+            
+Bots activos: ${bots.length}`);
         break;
 
     case "date":
+        logConsole(`/> date`);
+        logConsole(``);
+        logConsole(`Fecha y hora actual:`);
         logConsole(new Date().toLocaleString());
         break;
 
     case "time":
+        logConsole(`/> time`);
+        logConsole(``);
+        logConsole(`Hora actual:`);
         logConsole(new Date().toLocaleTimeString());
         break;
 
@@ -415,6 +426,7 @@ time        - Hora actual`);
     default:
         logConsole(`'${command}' no es un comando válido.`);
         logConsole("Escribe 'help' para ver la lista.");
+        logConsole("/>");
   }
 }
 
@@ -471,4 +483,5 @@ window.onload = async () => {
 
     logConsole("BotHost Console v1.0");
     logConsole("Escribe 'help' para ver los comandos.");
+    logConsole("/>");
 };
