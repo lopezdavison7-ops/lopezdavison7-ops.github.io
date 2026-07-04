@@ -5,31 +5,25 @@ let currentUser = null;
 let bots = [];
 
 const repositories = {
-    Telegram: [
-        {
-        }
-    ],
+
+    Telegram: [],
 
     WhatsApp: [
         {
+            id: 1,
             title: "🧪⚡ SENKU-BOT ⚡🧪",
             url: "https://github.com/Andresv27728/SENKU-BOT.git"
         },
         {
+            id: 2,
             title: "🦈 Gawr Gura",
             url: "https://github.com/Andresv27728/GawrGura.git"
         }
     ],
 
-    Discord: [
-        {
-        }
-    ],
+    Discord: [],
 
-    Custom: [
-        {
-        }
-    ]
+    Custom: []
 
 };
 
@@ -40,17 +34,19 @@ function loadRepositories() {
     const repoSelect = document.getElementById("repo-select");
 
     repoSelect.innerHTML =
-        '<option value="">Selecciona un repositorio</option>';
+        `<option value="">Selecciona un repositorio</option>`;
 
     if (!repositories[type]) return;
 
     repositories[type].forEach(repo => {
 
-        repoSelect.innerHTML += `
-            <option value="${repo.url}">
-                ${repo.title}
-            </option>
-        `;
+        const option = document.createElement("option");
+
+        option.value = repo.url;
+
+        option.textContent = repo.title;
+
+        repoSelect.appendChild(option);
 
     });
 
