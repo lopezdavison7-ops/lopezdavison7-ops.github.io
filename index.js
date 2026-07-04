@@ -28,6 +28,11 @@ const repositories = {
             id: 4,
             title: "ZΞN-BOT 🤖",
             url: "https://github.com/Axelix09/zenbot-base.git"
+        },
+        {
+            id: 5,
+            title: "Fsociety-V1",
+            url: "https://github.com/DevYerZx/fsociety-bot.git"
         }
     ],
 
