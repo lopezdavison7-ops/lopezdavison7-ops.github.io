@@ -120,11 +120,14 @@
             <!-- formulario igual pero con más color -->
             <div class="grid gap-6">
               <input id="bot-name" type="text" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400" placeholder="Nombre del bot">
-              <select id="bot-type" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400">
+              <select id="bot-type" onchange="loadRepositories()" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400">
                 <option value="Telegram">Telegram Bot</option>
                 <option value="Discord">Discord Bot</option>
                 <option value="WhatsApp">WhatsApp Bot</option>
                 <option value="Custom">Node.js Custom</option>
+              </select>
+              <select id="repo-select" onchange="updateRepository()" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400">
+                <option>Selecciona un repositorio</option>
               </select>
               <textarea id="bot-config" rows="8" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4" placeholder="Token o configuración..."></textarea>
               <button onclick="deployBot()" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 py-5 rounded-2xl text-xl font-bold hover:scale-105 transition">🚀 Desplegar Ahora</button>

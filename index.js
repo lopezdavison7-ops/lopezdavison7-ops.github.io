@@ -1,8 +1,72 @@
 // (El script es el mismo que la versión anterior, se mantengo funcional)
 import { supabase } from "./src/supabase.js";
 
-    let currentUser = null;
-    let bots = [];
+let currentUser = null;
+let bots = [];
+
+const repositories = {
+    Telegram: [
+        {
+        }
+    ],
+
+    WhatsApp: [
+        {
+            title: "🧪⚡ SENKU-BOT ⚡🧪",
+            url: "https://github.com/Andresv27728/SENKU-BOT.git"
+        },
+        {
+            title: "🦈 Gawr Gura",
+            url: "https://github.com/Andresv27728/GawrGura.git"
+        }
+    ],
+
+    Discord: [
+        {
+        }
+    ],
+
+    Custom: [
+        {
+        }
+    ]
+
+};
+
+function loadRepositories() {
+
+    const type = document.getElementById("bot-type").value;
+
+    const repoSelect = document.getElementById("repo-select");
+
+    repoSelect.innerHTML =
+        '<option value="">Selecciona un repositorio</option>';
+
+    if (!repositories[type]) return;
+
+    repositories[type].forEach(repo => {
+
+        repoSelect.innerHTML += `
+            <option value="${repo.url}">
+                ${repo.title}
+            </option>
+        `;
+
+    });
+
+    updateRepository();
+}
+
+function updateRepository() {
+
+    const repo = document.getElementById("repo-select").value;
+
+    document.getElementById("repo-url").value = repo;
+
+    document.getElementById("clone-command").value =
+        repo ? `git clone ${repo}` : "";
+
+}
     
 function showLogin() {
   document.getElementById('login-form').classList.remove('hidden');
@@ -506,6 +570,8 @@ window.onload = async () => {
     await loadBots();
 
     showSection("bots");
+
+    loadRepositories();
 
     logConsole("BotHost Console v1.0");
     logConsole("Escribe 'help' para ver los comandos.");
