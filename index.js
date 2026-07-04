@@ -327,11 +327,13 @@ function showSection(section) {
   document.getElementById(`section-${section}`).classList.remove('hidden');
 }
 
-const consoleBox = document.getElementById("console");
-const consoleInput = document.getElementById("consoleInput");
+const consoleBox = document.getElementById("console-output");
+const consoleInput = document.getElementById("console-input");
 
 function logConsole(msg) {
-  consoleBox.innerHTML += `<div>${msg}</div>`;
+  const line = document.createElement("div");
+  line.textContent = msg;
+  consoleBox.appendChild(line);
   consoleBox.scrollTop = consoleBox.scrollHeight;
 }
 
@@ -343,8 +345,11 @@ consoleInput.addEventListener("keydown", function (e) {
   }
 });
 
-function runCommand(cmd) {
-  const parts = cmd.split(" ");
+function runCommand(cmd = "") {
+  cmd = cmd.trim();
+  if (!cmd) return;
+
+  const parts = cmd.split(/\s+/);
   const command = parts[0].toLowerCase();
   const args = parts.slice(1);
 
@@ -380,7 +385,8 @@ time        - Hora actual`);
     // otros comandos aquí...
     
     default:
-        logConsole(`Comando desconocido: ${command}`);
+        logConsole(`'${command}' no es un comando válido.`);
+        logConsole("Escribe 'help' para ver la lista.");
   }
 }
 
@@ -432,4 +438,7 @@ window.onload = async () => {
     await loadBots();
 
     showSection("bots");
+
+    logConsole("BotHost Console v1.0");
+    logConsole("Escribe 'help' para ver los comandos.");
 };
