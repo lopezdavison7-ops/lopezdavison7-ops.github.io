@@ -408,16 +408,16 @@ Bots activos: ${bots.length}`);
         break;
 
     case "date":
-        logConsole(`/> date`);
-        logConsole(``);
-        logConsole(`Fecha y hora actual:`);
+        logConsole(`/> date
+            
+Fecha y hora actual:`);
         logConsole(new Date().toLocaleString());
         break;
 
     case "time":
-        logConsole(`/> time`);
-        logConsole(``);
-        logConsole(`Hora actual:`);
+        logConsole(`/> time
+
+Hora actual:`);
         logConsole(new Date().toLocaleTimeString());
         break;
 
