@@ -251,9 +251,30 @@ function renderBots() {
       <div class="mt-6 flex gap-3">
         <button onclick="toggleBot(${bot.id})" class="flex-1 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700">Toggle</button>
         <button onclick="openConsole(${bot.id})" class="flex-1 py-3 rounded-2xl bg-gray-700 hover:bg-gray-600">Consola</button>
+        <button onclick="deleteBot(${bot.id})" class="flex-1 py-3 rounded-2xl bg-red-600 hover:bg-red-700">Eliminar</button>
       </div>
     </div>
   `).join('');
+}
+
+async function deleteBot(id) {
+
+    if (!confirm("¿Eliminar este bot?")) return;
+
+    const { error } = await supabase
+        .from("bots")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", currentUser.id);
+
+    if (error) {
+        console.error(error);
+        return alert("No se pudo eliminar el bot.");
+    }
+
+    await loadBots();
+
+    logConsole("🗑️ Bot eliminado correctamente.");
 }
     
 async function deployBot() {
@@ -440,6 +461,7 @@ window.register = register;
 window.login = login;
 window.logout = logout;
 window.showSection = showSection;
+window.deleteBot = deleteBot;
 window.deployBot = deployBot;
 window.toggleBot = toggleBot;
 window.openConsole = openConsole;
