@@ -18,6 +18,21 @@ const repositories = {
             id: 2,
             title: "🦈 Gawr Gura",
             url: "https://github.com/Andresv27728/GawrGura.git"
+        },
+        {
+            id: 3,
+            title: "Kamijs",
+            url: "https://github.com/Neykoor/kamijs.git"
+        },
+        {
+            id: 4,
+            title: "ZΞN-BOT 🤖",
+            url: "https://github.com/Axelix09/zenbot-base.git"
+        },
+        {
+            id: 5,
+            title: "Fsociety-V1",
+            url: "https://github.com/DevYerZx/fsociety-bot.git"
         }
     ],
 
