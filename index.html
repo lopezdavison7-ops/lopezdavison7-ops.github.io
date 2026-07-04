@@ -138,17 +138,17 @@
           <div id="console-output" class="terminal p-8 rounded-3xl h-[440px] overflow-auto text-emerald-300 text-sm whitespace-pre-wrap"></div>
           <div class="mt-5 flex gap-3">
             <input id="console-input" type="text" class="flex-1 bg-gray-900 border border-emerald-400/30 rounded-2xl px-6 py-4 focus:border-emerald-400" placeholder="Escribe un comando...">
-            <button onclick="runCommand()" class="px-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl font-bold">Enviar</button>
+            <button onclick="runCommand(document.getElementById('console-input').value)" class="px-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl font-bold">Enviar</button>
           </div>
         </div>
 
         <!-- Aquí va tu dashboard arriba -->
   
-        <div id="console" class="bg-black text-green-400 p-4 h-64 overflow-y-auto"></div>
+        <!-- <div id="console" class="bg-black text-green-400 p-4 h-64 overflow-y-auto"></div>
 
           <input id="consoleInput"
             class="w-full p-2 bg-gray-900 text-white"
-            placeholder="Escribe un comando...">
+            placeholder="Escribe un comando..."> -->
 
         <!-- Stats -->
         <div id="section-stats" class="section hidden">
