@@ -402,3 +402,42 @@ window.deployBot = deployBot;
 window.toggleBot = toggleBot;
 window.runCommand = runCommand;
 window.deleteAccount = deleteAccount;
+
+window.onload = async () => {
+    const {
+        data: { session }
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+        resetUI();
+        return;
+    }
+
+    const user = session.user;
+
+    const { data: profile } = await supabase
+        .from("user_data")
+        .select("username,email")
+        .eq("id", user.id)
+        .single();
+
+    currentUser = {
+        id: user.id,
+        username: profile.username,
+        email: profile.email
+    };
+
+    document.getElementById("nav-menu").classList.remove("hidden");
+    document.getElementById("auth-screen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+
+    document.getElementById("welcome-name").textContent = currentUser.username;
+    document.getElementById("username-display").textContent = currentUser.username;
+
+    document.getElementById("user-info").classList.remove("hidden");
+    document.getElementById("btn-logout").classList.remove("hidden");
+
+    await loadBots();
+
+    showSection("bots");
+};
