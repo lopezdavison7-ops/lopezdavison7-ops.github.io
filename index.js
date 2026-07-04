@@ -384,6 +384,8 @@ function runCommand(cmd = "") {
     case "clear":
     case "cls":
       consoleBox.innerHTML = "";
+      logConsole("BotHost Console v1.0");
+      logConsole("Escribe 'help' para ver los comandos.");
       break;
 
     case "help":
