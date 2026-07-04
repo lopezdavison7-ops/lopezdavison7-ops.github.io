@@ -322,6 +322,14 @@ async function deployBot() {
     const name = document.getElementById("bot-name").value.trim() || "NuevoBot";
     const type = document.getElementById("bot-type").value;
 
+    alert(JSON.stringify(currentUser, null, 2));
+
+    const {
+        data: { user }
+    } = await supabase.auth.getUser();
+
+    alert(JSON.stringify(user, null, 2));
+
     const { error } = await supabase
         .from("bots")
         .insert({
