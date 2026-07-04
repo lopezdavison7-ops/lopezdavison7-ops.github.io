@@ -390,7 +390,7 @@ function runCommand(cmd = "") {
       break;
 
     case "help":
-        logConsole(`/> help
+        logConsole(`/> '${command}'
 
 Comandos disponibles:
 
@@ -399,26 +399,30 @@ bots        - Bots activos
 clear, cls  - Limpia la consola
 date        - Fecha y hora
 time        - Hora actual`);
+        logConsole("/>");
         break;
 
     case "bots":
-        logConsole(`/> bots
+        logConsole(`/> '${command}'
             
 Bots activos: ${bots.length}`);
+        logConsole("/>");
         break;
 
     case "date":
-        logConsole(`/> date
+        logConsole(`/> '${command}'
             
 Fecha y hora actual:`);
         logConsole(new Date().toLocaleString());
+        logConsole("/>");
         break;
 
     case "time":
-        logConsole(`/> time
+        logConsole(`/> '${command}'
 
 Hora actual:`);
         logConsole(new Date().toLocaleTimeString());
+        logConsole("/>");
         break;
 
     // otros comandos aquí...
