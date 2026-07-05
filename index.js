@@ -11,28 +11,23 @@ const repositories = {
     WhatsApp: [
         {
             id: 1,
-            title: "🧪⚡ SENKU-BOT ⚡🧪",
-            url: "https://github.com/Andresv27728/SENKU-BOT.git"
+            github: "https://github.com/Andresv27728/SENKU-BOT"
         },
         {
             id: 2,
-            title: "🦈 Gawr Gura",
-            url: "https://github.com/Andresv27728/GawrGura.git"
+            github: "https://github.com/Andresv27728/GawrGura"
         },
         {
             id: 3,
-            title: "Kamijs",
-            url: "https://github.com/Neykoor/kamijs.git"
+            github: "https://github.com/Neykoor/kamijs"
         },
         {
             id: 4,
-            title: "ZΞN-BOT 🤖",
-            url: "https://github.com/Axelix09/zenbot-base.git"
+            github: "https://github.com/Axelix09/zenbot-base"
         },
         {
             id: 5,
-            title: "Fsociety-V1",
-            url: "https://github.com/DevYerZx/fsociety-bot.git"
+            github : "https://github.com/DevYerZx/fsociety-bot"
         }
     ],
 
@@ -42,41 +37,220 @@ const repositories = {
 
 };
 
-function loadRepositories() {
+function parseGitHubUrl(url) {
+    const parts = new URL(url).pathname
+        .split("/")
+        .filter(Boolean);
 
-    const type = document.getElementById("bot-type").value;
-
-    const repoSelect = document.getElementById("repo-select");
-
-    repoSelect.innerHTML =
-        `<option value="">Selecciona un repositorio</option>`;
-
-    if (!repositories[type]) return;
-
-    repositories[type].forEach(repo => {
-
-        const option = document.createElement("option");
-
-        option.value = repo.url;
-
-        option.textContent = repo.title;
-
-        repoSelect.appendChild(option);
-
-    });
-
-    updateRepository();
+    return {
+        owner: parts[0],
+        repo: parts[1]
+    };
 }
 
-function updateRepository() {
+async function getRepositoryData(githubUrl) {
+    const { owner, repo } = parseGitHubUrl(githubUrl);
+    const response = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}`
+    );
 
-    const repo = document.getElementById("repo-select").value;
+    if (!response.ok) {
+        throw new Error("Repositorio no encontrado.");
+    }
 
-    document.getElementById("repo-url").value = repo;
+    return await response.json();
+}
+
+async function loadRepositories() {
+    const type = document.getElementById("bot-type").value;
+    const repoSelect = document.getElementById("repo-select");
+
+    repoSelect.options.length = 0;
+    repoSelect.add(new Option("Cargando repositorios...", ""));
+
+    if (!repositories[type] || repositories[type].length === 0)
+        return;
+
+    repoSelect.options.length = 0;
+    repoSelect.add(new Option("Selecciona un repositorio", ""));
+
+    for (const repository of repositories[type]) {
+        try {
+            const repo = await getRepositoryData(repository.github);
+
+            repoSelect.add(
+                new Option(repo.full_name, repository.github)
+            );
+        } catch (error) {
+            repoSelect.add(
+                new Option("❌ Repositorio no disponible", "")
+            );
+        }
+    }
+}
+
+async function updateRepository() {
+    const github = document.getElementById("repo-select").value;
+    
+    if (!github) return;
+
+    const repo = await getRepositoryData(github);
+
+    document.getElementById("repo-url").value =
+        repo.html_url;
 
     document.getElementById("clone-command").value =
-        repo ? `git clone ${repo}` : "";
+        `git clone ${repo.clone_url}`;
+}
 
+async function analyzeRepository(githubUrl) {
+    const { owner, repo } = parseGitHubUrl(githubUrl);
+    // Obtener información general
+    const repoResponse = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}`
+    );
+
+    if (!repoResponse.ok) {
+        throw new Error("No se pudo obtener el repositorio.");
+    }
+
+    const repository = await repoResponse.json();
+    const branch = repository.default_branch;
+    // Descargar todo en paralelo
+    const [
+        readme,
+        packageJson,
+        tree,
+        commits
+    ] = await Promise.all([
+        loadReadme(owner, repo, branch),
+        loadPackage(owner, repo, branch),
+        loadTree(owner, repo, branch),
+        loadLastCommit(owner, repo)
+    ]);
+
+    // Analizar archivos
+    const warnings = detectWarnings(tree);
+    // Analizar package.json
+    const dependencies = packageJson
+        ? Object.keys(packageJson.dependencies || {})
+        : [];
+    const devDependencies = packageJson
+        ? Object.keys(packageJson.devDependencies || {})
+        : [];
+    const scripts = packageJson
+        ? packageJson.scripts || {}
+        : {};
+
+    return {
+        owner,
+        repo,
+        repository,
+        readme,
+        package: packageJson,
+        tree,
+        warnings,
+        dependencies,
+        devDependencies,
+        scripts,
+        lastCommit: commits
+    };
+}
+
+async function loadReadme(owner, repo, branch){
+    try{
+        const response = await fetch(
+`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/README.md`
+        );
+        if(!response.ok) return null;
+
+        return await response.text();
+    }catch{
+        return null;
+    }
+}
+
+async function loadPackage(owner, repo, branch){
+    try{
+        const response = await fetch(
+`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/package.json`
+        );
+
+        if(!response.ok) return null;
+
+        return await response.json();
+    }catch{
+        return null;
+    }
+}
+
+async function loadTree(owner, repo, branch){
+    try{
+        const response = await fetch(
+`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`
+        );
+
+        if(!response.ok) return [];
+
+        const data = await response.json();
+
+        return data.tree || [];
+    }catch{
+        return [];
+    }
+}
+
+async function loadLastCommit(owner, repo){
+    try{
+        const response = await fetch(
+`https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`
+        );
+
+        if(!response.ok) return null;
+
+        const commits = await response.json();
+
+        return commits[0];
+    }catch{
+        return null;
+    }
+}
+
+function detectWarnings(tree){
+    const files = tree.map(file=>file.path);
+    const warnings=[];
+
+    if(files.includes(".env"))
+        warnings.push("🔑 Utiliza variables de entorno.");
+
+    if(files.includes(".env.example"))
+        warnings.push("📄 Incluye un archivo .env.example.");
+
+    if(files.includes("docker-compose.yml"))
+        warnings.push("🐳 Compatible con Docker.");
+
+    if(files.includes("pnpm-lock.yaml"))
+        warnings.push("📦 Utiliza PNPM.");
+
+    if(files.includes("yarn.lock"))
+        warnings.push("🧶 Utiliza Yarn.");
+
+    if(files.includes("bun.lockb"))
+        warnings.push("🥟 Utiliza Bun.");
+
+    if(files.includes("requirements.txt"))
+        warnings.push("🐍 Proyecto Python.");
+
+    if(files.includes("Cargo.toml"))
+        warnings.push("🦀 Proyecto Rust.");
+
+    if(files.includes("go.mod"))
+        warnings.push("🐹 Proyecto Go.");
+
+    if(files.includes("pm2.config.js"))
+        warnings.push("⚙ Compatible con PM2.");
+
+    return warnings;
 }
     
 function showLogin() {

@@ -116,20 +116,45 @@
         <!-- Desplegar -->
         <div id="section-deploy" class="section hidden">
           <h2 class="text-4xl font-bold mb-8">Desplegar Nuevo Bot</h2>
+
           <div class="bg-gradient-to-br from-gray-900 to-slate-900 border border-purple-500/30 rounded-3xl p-10">
-            <!-- formulario igual pero con más color -->
             <div class="grid gap-6">
+
+              <!-- Nombre -->
               <input id="bot-name" type="text" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400" placeholder="Nombre del bot">
+
+              <!-- Tipo -->
               <select id="bot-type" onchange="loadRepositories()" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400">
                 <option value="Telegram">Telegram Bot</option>
                 <option value="Discord">Discord Bot</option>
                 <option value="WhatsApp">WhatsApp Bot</option>
                 <option value="Custom">Node.js Custom</option>
               </select>
+
+              <!-- Repositorio -->
               <select id="repo-select" onchange="updateRepository()" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4 focus:border-cyan-400">
-                <option>Selecciona un repositorio</option>
+                <option value="">Selecciona un repositorio</option>
               </select>
+
+              <!-- 👇 AQUÍ VA EL PANEL DEL REPOSITORIO 👇 -->
+              <div id="repository-view" class="hidden">
+                <div class="flex flex-wrap gap-2 mb-5">
+                  <button class="repo-tab" onclick="showRepoTab('readme')">📖 README</button>
+                  <button class="repo-tab" onclick="showRepoTab('install')">📋 Instalación</button>
+                  <button class="repo-tab" onclick="showRepoTab('dependencies')">🧩 Dependencias</button>
+                  <button class="repo-tab" onclick="showRepoTab('files')">📂 Archivos</button>
+                  <button class="repo-tab" onclick="showRepoTab('info')">📊 Información</button>
+                  <button class="repo-tab" onclick="showRepoTab('warnings')">⚠️ Avisos</button>
+                </div>
+
+                <div id="repository-content" class="bg-gray-950 border border-cyan-400/20 rounded-2xl p-6 min-h-[300px]">
+                </div>
+              </div>
+
+              <!-- Configuración -->
               <textarea id="bot-config" rows="8" class="bg-gray-800 border border-cyan-400/30 rounded-2xl px-6 py-4" placeholder="Token o configuración..."></textarea>
+
+              <!-- Botón -->
               <button onclick="deployBot()" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 py-5 rounded-2xl text-xl font-bold hover:scale-105 transition">🚀 Desplegar Ahora</button>
             </div>
           </div>
