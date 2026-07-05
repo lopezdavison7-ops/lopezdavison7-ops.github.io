@@ -8,25 +8,29 @@ const repositories = {
 
     Telegram: [],
 
-    WhatsApp: [
+    WhatsApp: [,
         {
             id: 1,
-            github: "https://github.com/Andresv27728/SENKU-BOT"
+            github: "https://github.com/matterssmith-net/Base-Bot/"
         },
         {
             id: 2,
-            github: "https://github.com/Andresv27728/GawrGura"
+            github: "https://github.com/Andresv27728/SENKU-BOT"
         },
         {
             id: 3,
-            github: "https://github.com/Neykoor/kamijs"
+            github: "https://github.com/Andresv27728/GawrGura"
         },
         {
             id: 4,
-            github: "https://github.com/Axelix09/zenbot-base"
+            github: "https://github.com/Neykoor/kamijs"
         },
         {
             id: 5,
+            github: "https://github.com/Axelix09/zenbot-base"
+        },
+        {
+            id: 6,
             github : "https://github.com/DevYerZx/fsociety-bot"
         }
     ],
@@ -91,16 +95,29 @@ async function loadRepositories() {
 
 async function updateRepository() {
     const github = document.getElementById("repo-select").value;
-    
-    if (!github) return;
+    if (!github) {
+        document.getElementById("repository-card").classList.add("hidden");
+        document.getElementById("repository-view").classList.add("hidden");
 
-    const repo = await getRepositoryData(github);
+        return;
+    }
+    try {
+        // Analizar todo el repositorio
+        currentRepository = await analyzeRepository(github);
 
-    document.getElementById("repo-url").value =
-        repo.html_url;
+        // Mostrar la tarjeta superior
+        renderRepositoryCard();
 
-    document.getElementById("clone-command").value =
-        `git clone ${repo.clone_url}`;
+        // Mostrar las pestañas
+        document.getElementById("repository-view")
+            .classList.remove("hidden");
+
+        // Abrir README por defecto
+        showRepoTab("readme");
+    } catch (error) {
+        console.error(error);
+        alert("No se pudo analizar el repositorio.");
+    }
 }
 
 async function analyzeRepository(githubUrl) {
@@ -251,6 +268,55 @@ function detectWarnings(tree){
         warnings.push("⚙ Compatible con PM2.");
 
     return warnings;
+}
+
+function renderRepositoryCard(){
+    const repo=currentRepository.repository;
+
+    document.getElementById("repository-card")
+        .classList.remove("hidden");
+
+    document.getElementById("repo-avatar").src =
+        repo.owner.avatar_url;
+
+    document.getElementById("repo-name").textContent =
+        repo.name;
+
+    document.getElementById("repo-owner").textContent =
+        repo.full_name;
+
+    document.getElementById("repo-description").textContent =
+        repo.description || "Sin descripción.";
+
+    document.getElementById("repo-stars").textContent =
+        repo.stargazers_count;
+
+    document.getElementById("repo-forks").textContent =
+        repo.forks_count;
+
+    document.getElementById("repo-issues").textContent =
+        repo.open_issues_count;
+
+    document.getElementById("repo-watchers").textContent =
+        repo.watchers_count;
+
+    document.getElementById("repo-license").textContent =
+        repo.license?.name || "Sin licencia";
+
+    document.getElementById("repo-updated").textContent =
+        new Date(repo.updated_at).toLocaleString();
+
+    document.getElementById("repo-github").href =
+        repo.html_url;
+
+    document.getElementById("download-zip").href =
+        `${repo.html_url}/archive/refs/heads/${repo.default_branch}.zip`;
+
+    document.getElementById("copy-clone-btn").onclick = () => {
+        navigator.clipboard.writeText(
+            `git clone ${repo.clone_url}`
+        );
+    };
 }
     
 function showLogin() {

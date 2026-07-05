@@ -136,6 +136,86 @@
                 <option value="">Selecciona un repositorio</option>
               </select>
 
+              <!-- Tarjeta del Repositorio -->
+              <div id="repository-card" class="hidden bg-gradient-to-br from-gray-900 to-slate-900 border border-cyan-500/30 rounded-3xl p-8">
+                  <div class="flex items-start justify-between">
+                      <div class="flex gap-5">
+
+                          <!-- Avatar -->
+                          <img id="repo-avatar" src="" class="w-20 h-20 rounded-full border-2 border-cyan-400">
+                          <div>
+                              <h2 id="repo-name"  class="text-3xl font-bold">
+                              </h2>
+                              <p id="repo-owner" class="text-cyan-400">
+                              </p>
+                              <p id="repo-description" class="text-gray-300 mt-2">
+                              </p>
+                          </div>
+                      </div>
+                      <div>
+                          <a id="repo-github" target="_blank" class="bg-gray-800 hover:bg-gray-700 px-5 py-3 rounded-xl">🌐 GitHub</a>
+                      </div>
+                  </div>
+                  <hr class="border-gray-700 my-6">
+                  <div class="grid md:grid-cols-4 gap-5">
+                      <div class="bg-gray-800 rounded-xl p-5">
+                          <div class="text-yellow-400 text-3xl">
+                            ⭐
+                          </div>
+                          <div id="repo-stars" class="text-2xl font-bold mt-2">
+                            -
+                          </div>
+                          <small>Stars</small>
+                      </div>
+                      <div class="bg-gray-800 rounded-xl p-5">
+                          <div class="text-green-400 text-3xl">
+                            🍴
+                          </div>
+                          <div id="repo-forks" class="text-2xl font-bold mt-2">
+                            -
+                          </div>
+                          <small>Forks</small>
+                      </div>
+                      <div class="bg-gray-800 rounded-xl p-5">
+                          <div class="text-red-400 text-3xl">
+
+                          </div>
+                          <div id="repo-issues" class="text-2xl font-bold mt-2">
+                            -
+                          </div>
+                          <small>Issues</small>
+                      </div>
+                      <div class="bg-gray-800 rounded-xl p-5">
+                          <div class="text-cyan-400 text-3xl">
+                            👀
+                          </div>
+                          <div id="repo-watchers" class="text-2xl font-bold mt-2">
+                            -
+                          </div>
+                          <small>Watchers</small>
+                      </div>
+                  </div>
+                  <div class="grid md:grid-cols-2 gap-5 mt-6">
+                      <div>
+                          <strong>📄 Licencia</strong>
+                          <div id="repo-license">
+                            -
+                          </div>
+                      </div>
+                      <div>
+                          <strong>🕒 Última actualización</strong>
+                          <div id="repo-updated">
+                            -
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="flex gap-4 mt-8 flex-wrap">
+                      <button id="copy-clone-btn" class="bg-cyan-600 hover:bg-cyan-700 px-6 py-3 rounded-xl">📋 Copiar git clone</button>
+                      <a id="download-zip" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 px-6 py-3 rounded-xl">⬇ Descargar ZIP</a>
+                  </div>
+              </div>
+
               <!-- 👇 AQUÍ VA EL PANEL DEL REPOSITORIO 👇 -->
               <div id="repository-view" class="hidden">
                 <div class="flex flex-wrap gap-2 mb-5">
