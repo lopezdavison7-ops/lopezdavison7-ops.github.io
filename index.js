@@ -117,7 +117,7 @@ async function updateRepository() {
     } catch (error) {
         console.error(error);
         alert("No se pudo analizar el repositorio.");
-    }
+}
 }
 
 async function analyzeRepository(githubUrl) {
