@@ -1,6 +1,6 @@
 // (El script es el mismo que la versión anterior, se mantengo funcional)
-import { supabase } from "./src/supabase.js";
 
+import { supabase } from "./src/supabase.js";
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 
 let currentUser = null;
