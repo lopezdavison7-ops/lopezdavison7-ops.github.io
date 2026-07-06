@@ -8,7 +8,7 @@ const repositories = {
 
     Telegram: [],
 
-    WhatsApp: [,
+    WhatsApp: [
         {
             id: 1,
             github: "https://github.com/matterssmith-net/Base-Bot/"
