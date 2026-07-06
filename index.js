@@ -396,38 +396,44 @@ npm start
 📊 Información del repositorio
 </h2>
 
-<b>📦 Repositorio:</b><br>
+<div class="grid md:grid-cols-2 gap-5">
+
+<div class="bg-gray-900 rounded-xl p-4">
+<b>📦 Repositorio</b><br>
 ${repo.full_name}
+</div>
 
-<br><br>
-
-<b>⭐ Stars:</b><br>
+<div class="bg-gray-900 rounded-xl p-4">
+<b>⭐ Stars</b><br>
 ${repo.stargazers_count}
+</div>
 
-<br><br>
-
-<b>🍴 Forks:</b><br>
+<div class="bg-gray-900 rounded-xl p-4">
+<b>🍴 Forks</b><br>
 ${repo.forks_count}
+</div>
 
-<br><br>
-
-<b>👀 Watchers:</b><br>
+<div class="bg-gray-900 rounded-xl p-4">
+<b>👀 Watchers</b><br>
 ${repo.watchers_count}
+</div>
 
-<br><br>
-
-<b>🐞 Issues:</b><br>
+<div class="bg-gray-900 rounded-xl p-4">
+<b>🐞 Issues</b><br>
 ${repo.open_issues_count}
+</div>
 
-<br><br>
-
-<b>📄 Licencia:</b><br>
+<div class="bg-gray-900 rounded-xl p-4">
+<b>📄 Licencia</b><br>
 ${repo.license?.name ?? "Sin licencia"}
+</div>
 
-<br><br>
-
-<b>🕒 Última actualización:</b><br>
+<div class="bg-gray-900 rounded-xl p-4 md:col-span-2">
+<b>🕒 Última actualización</b><br>
 ${new Date(repo.updated_at).toLocaleString()}
+</div>
+
+</div>
             `;
             break;
 
