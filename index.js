@@ -1,6 +1,8 @@
 // (El script es el mismo que la versión anterior, se mantengo funcional)
 import { supabase } from "./src/supabase.js";
 
+import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
+
 let currentUser = null;
 let currentRepository = null;
 let bots = [];
@@ -390,13 +392,42 @@ npm start
             const repo = currentRepository.repository;
 
             container.innerHTML = `
-<b>Repositorio:</b> ${repo.full_name}<br><br>
-⭐ ${repo.stargazers_count}<br>
-🍴 ${repo.forks_count}<br>
-👀 ${repo.watchers_count}<br>
-🐞 ${repo.open_issues_count}<br>
-📄 ${repo.license?.name ?? "Sin licencia"}<br>
-🕒 ${new Date(repo.updated_at).toLocaleString()}
+<h2 class="text-2xl font-bold mb-6 text-cyan-400">
+📊 Información del repositorio
+</h2>
+
+<b>📦 Repositorio:</b><br>
+${repo.full_name}
+
+<br><br>
+
+<b>⭐ Stars:</b><br>
+${repo.stargazers_count}
+
+<br><br>
+
+<b>🍴 Forks:</b><br>
+${repo.forks_count}
+
+<br><br>
+
+<b>👀 Watchers:</b><br>
+${repo.watchers_count}
+
+<br><br>
+
+<b>🐞 Issues:</b><br>
+${repo.open_issues_count}
+
+<br><br>
+
+<b>📄 Licencia:</b><br>
+${repo.license?.name ?? "Sin licencia"}
+
+<br><br>
+
+<b>🕒 Última actualización:</b><br>
+${new Date(repo.updated_at).toLocaleString()}
             `;
             break;
 
