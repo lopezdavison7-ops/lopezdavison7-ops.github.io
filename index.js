@@ -32,6 +32,10 @@ const repositories = {
         {
             id: 6,
             github : "https://github.com/DevYerZx/fsociety-bot"
+        },
+        {
+            id: 7,
+            github : "https://github.com/eliac-d/kirito-Bot-MD-v3"
         }
     ],
 
@@ -42,9 +46,19 @@ const repositories = {
 };
 
 function parseGitHubUrl(url) {
-    const parts = new URL(url).pathname
+    if (!url) {
+        throw new Error("La URL del repositorio está vacía.");
+    }
+
+    const parts = new URL(url)
+        .pathname
+        .replace(/\.git$/, "")
         .split("/")
         .filter(Boolean);
+
+    if (parts.length < 2) {
+        throw new Error("URL de GitHub inválida.");
+    }
 
     return {
         owner: parts[0],
@@ -59,7 +73,8 @@ async function getRepositoryData(githubUrl) {
     );
 
     if (!response.ok) {
-        throw new Error("Repositorio no encontrado.");
+        const error = await response.json();
+        throw new Error(error.message);
     }
 
     return await response.json();
@@ -69,25 +84,43 @@ async function loadRepositories() {
     const type = document.getElementById("bot-type").value;
     const repoSelect = document.getElementById("repo-select");
 
-    repoSelect.options.length = 0;
-    repoSelect.add(new Option("Cargando repositorios...", ""));
+    repoSelect.innerHTML = "";
+    repoSelect.add(
+        new Option("Cargando repositorios...", "")
+    );
 
-    if (!repositories[type] || repositories[type].length === 0)
+    if (!repositories[type] || repositories[type].length === 0) {
+        repoSelect.innerHTML = "";
+        repoSelect.add(
+            new Option("No hay repositorios", "")
+        );
+
         return;
-
-    repoSelect.options.length = 0;
-    repoSelect.add(new Option("Selecciona un repositorio", ""));
+    }
+    repoSelect.innerHTML = "";
+    repoSelect.add(
+        new Option("Selecciona un repositorio", "")
+    );
 
     for (const repository of repositories[type]) {
         try {
-            const repo = await getRepositoryData(repository.github);
+            if (!repository.github) {
+                repoSelect.add(
+                    new Option("❌ URL no configurada", "")
+                );
 
+                continue;
+            }
+            const repo = await getRepositoryData(repository.github);
             repoSelect.add(
                 new Option(repo.full_name, repository.github)
             );
+
         } catch (error) {
+            console.error(error);
+
             repoSelect.add(
-                new Option("❌ Repositorio no disponible", "")
+                new Option(`❌ ${repository.github}`, "")
             );
         }
     }
@@ -95,69 +128,55 @@ async function loadRepositories() {
 
 async function updateRepository() {
     const github = document.getElementById("repo-select").value;
+
     if (!github) {
-        document.getElementById("repository-card").classList.add("hidden");
-        document.getElementById("repository-view").classList.add("hidden");
+        document
+            .getElementById("repository-card")
+            ?.classList.add("hidden");
+
+        document
+            .getElementById("repository-view")
+            ?.classList.add("hidden");
 
         return;
     }
-    try {
-        // Analizar todo el repositorio
-        currentRepository = await analyzeRepository(github);
 
-        // Mostrar la tarjeta superior
+    try {
+        currentRepository = await analyzeRepository(github);
         renderRepositoryCard();
 
-        // Mostrar las pestañas
-        document.getElementById("repository-view")
+        document
+            .getElementById("repository-view")
             .classList.remove("hidden");
 
-        // Abrir README por defecto
         showRepoTab("readme");
+
     } catch (error) {
         console.error(error);
-        alert("No se pudo analizar el repositorio.");
-}
+
+        alert(error.message);
+    }
 }
 
 async function analyzeRepository(githubUrl) {
-    const { owner, repo } = parseGitHubUrl(githubUrl);
-    // Obtener información general
-    const repoResponse = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}`
-    );
+    const repository = await getRepositoryData(githubUrl);
 
-    if (!repoResponse.ok) {
-        throw new Error("No se pudo obtener el repositorio.");
-    }
-
-    const repository = await repoResponse.json();
+    const owner = repository.owner.login;
+    const repo = repository.name;
     const branch = repository.default_branch;
-    // Descargar todo en paralelo
+
     const [
         readme,
         packageJson,
         tree,
         commits
     ] = await Promise.all([
+
         loadReadme(owner, repo, branch),
         loadPackage(owner, repo, branch),
         loadTree(owner, repo, branch),
         loadLastCommit(owner, repo)
     ]);
-
-    // Analizar archivos
-    const warnings = detectWarnings(tree);
-    // Analizar package.json
-    const dependencies = packageJson
-        ? Object.keys(packageJson.dependencies || {})
-        : [];
-    const devDependencies = packageJson
-        ? Object.keys(packageJson.devDependencies || {})
-        : [];
-    const scripts = packageJson
-        ? packageJson.scripts || {}
-        : {};
 
     return {
         owner,
@@ -166,10 +185,19 @@ async function analyzeRepository(githubUrl) {
         readme,
         package: packageJson,
         tree,
-        warnings,
-        dependencies,
-        devDependencies,
-        scripts,
+
+        warnings: detectWarnings(tree),
+
+        dependencies: packageJson
+            ? Object.keys(packageJson.dependencies || {})
+            : [],
+
+        devDependencies: packageJson
+            ? Object.keys(packageJson.devDependencies || {})
+            : [],
+
+        scripts: packageJson?.scripts || {},
+
         lastCommit: commits
     };
 }
