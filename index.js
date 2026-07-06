@@ -5,7 +5,6 @@ let currentUser = null;
 let currentRepository = null;
 let bots = [];
 
-
 const repositories = {
 
     Telegram: [],
@@ -339,6 +338,77 @@ function renderRepositoryCard(){
             `git clone ${repo.clone_url}`
         );
     };
+}
+
+function showRepoTab(tab) {
+    if (!currentRepository) return;
+
+    const container = document.getElementById("repository-content");
+
+    switch (tab) {
+        case "readme":
+            container.innerHTML = `
+                <div class="prose prose-invert max-w-none">
+                    ${marked.parse(currentRepository.readme || "# README no encontrado")}
+                </div>
+            `;
+            break;
+
+        case "install":
+            container.innerHTML = `
+<pre class="bg-gray-900 rounded-xl p-5 overflow-auto">
+git clone ${currentRepository.repository.clone_url}
+
+cd ${currentRepository.repository.name}
+
+npm install
+
+npm start
+</pre>
+            `;
+            break;
+
+        case "dependencies":
+            container.innerHTML =
+                currentRepository.dependencies.length
+                    ? currentRepository.dependencies.map(dep =>
+                        `<span class="inline-block bg-cyan-700 rounded-lg px-3 py-2 mr-2 mb-2">${dep}</span>`
+                    ).join("")
+                    : "No se encontraron dependencias.";
+            break;
+
+        case "files":
+            container.innerHTML =
+                currentRepository.tree
+                    .map(file =>
+                        `<div>📄 ${file.path}</div>`
+                    )
+                    .join("");
+            break;
+
+        case "info":
+            const repo = currentRepository.repository;
+
+            container.innerHTML = `
+<b>Repositorio:</b> ${repo.full_name}<br><br>
+⭐ ${repo.stargazers_count}<br>
+🍴 ${repo.forks_count}<br>
+👀 ${repo.watchers_count}<br>
+🐞 ${repo.open_issues_count}<br>
+📄 ${repo.license?.name ?? "Sin licencia"}<br>
+🕒 ${new Date(repo.updated_at).toLocaleString()}
+            `;
+            break;
+
+        case "warnings":
+            container.innerHTML =
+                currentRepository.warnings.length
+                    ? currentRepository.warnings.map(w =>
+                        `<div class="bg-yellow-700 rounded-xl p-3 mb-2">⚠ ${w}</div>`
+                    ).join("")
+                    : "✅ No se detectaron avisos.";
+            break;
+    }
 }
     
 function showLogin() {
@@ -803,6 +873,7 @@ window.updateRepository = updateRepository;
 window.deleteBot = deleteBot;
 window.deployBot = deployBot;
 window.toggleBot = toggleBot;
+window.showRepoTab = showRepoTab;
 window.openConsole = openConsole;
 window.sendCommand = sendCommand;
 window.runCommand = runCommand;
