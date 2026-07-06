@@ -68,16 +68,19 @@ function parseGitHubUrl(url) {
 
 async function getRepositoryData(githubUrl) {
     const { owner, repo } = parseGitHubUrl(githubUrl);
+    console.log(owner, repo);
     const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}`
     );
 
+    const data = await response.json();
+    console.log(data);
+
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        throw new Error(data.message);
     }
 
-    return await response.json();
+    return data;
 }
 
 async function loadRepositories() {
@@ -85,42 +88,31 @@ async function loadRepositories() {
     const repoSelect = document.getElementById("repo-select");
 
     repoSelect.innerHTML = "";
-    repoSelect.add(
-        new Option("Cargando repositorios...", "")
-    );
+    repoSelect.add(new Option("Cargando repositorios...", ""));
 
     if (!repositories[type] || repositories[type].length === 0) {
         repoSelect.innerHTML = "";
-        repoSelect.add(
-            new Option("No hay repositorios", "")
-        );
-
+        repoSelect.add(new Option("No hay repositorios", ""));
         return;
     }
+
     repoSelect.innerHTML = "";
-    repoSelect.add(
-        new Option("Selecciona un repositorio", "")
-    );
+    repoSelect.add(new Option("Selecciona un repositorio", ""));
 
     for (const repository of repositories[type]) {
-        try {
-            if (!repository.github) {
-                repoSelect.add(
-                    new Option("❌ URL no configurada", "")
-                );
 
-                continue;
-            }
+        try {
+            console.log("Consultando:", repository.github);
             const repo = await getRepositoryData(repository.github);
+            console.log("GitHub respondió:", repo);
             repoSelect.add(
                 new Option(repo.full_name, repository.github)
             );
 
         } catch (error) {
             console.error(error);
-
             repoSelect.add(
-                new Option(`❌ ${repository.github}`, "")
+                new Option(`❌ ${error.message}`, "")
             );
         }
     }
