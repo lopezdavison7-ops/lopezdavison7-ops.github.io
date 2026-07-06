@@ -2,6 +2,7 @@
 import { supabase } from "./src/supabase.js";
 
 let currentUser = null;
+let currentRepository = null;
 let bots = [];
 
 const repositories = {
