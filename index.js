@@ -529,6 +529,9 @@ function closeCodeViewer(){
 }
 
 function showRepoTab(tab) {
+    // Ocultar el visor de código al cambiar de pestaña
+    closeCodeViewer();
+
     if (!currentRepository) return;
 
     const container = document.getElementById("repository-content");
