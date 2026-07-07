@@ -122,6 +122,8 @@ async function loadRepositories() {
 }
 
 async function updateRepository() {
+    closeCodeViewer();
+    
     const github = document.getElementById("repo-select").value;
 
     if (!github) {
@@ -521,11 +523,10 @@ function showCodeViewer(name, code){
     hljs.highlightElement(codeElement);
 }
 
-function closeCodeViewer(){
-    document
-        .getElementById("code-viewer")
-        .classList
-        .add("hidden");
+function closeCodeViewer() {
+    const viewer = document.getElementById("code-viewer");
+    if (!viewer) return;
+    viewer.classList.add("hidden");
 }
 
 function showRepoTab(tab) {
