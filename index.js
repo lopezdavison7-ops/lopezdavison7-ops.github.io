@@ -505,6 +505,29 @@ async function openRepositoryFile(path){
     showCodeViewer(path, code);
 }
 
+function showCodeViewer(name, code){
+    document
+        .getElementById("code-viewer")
+        .classList
+        .remove("hidden");
+
+    document
+        .getElementById("code-title")
+        .textContent =
+        name;
+
+    const codeElement = document.getElementById("code-content");
+    codeElement.textContent = code;
+    hljs.highlightElement(codeElement);
+}
+
+function closeCodeViewer(){
+    document
+        .getElementById("code-viewer")
+        .classList
+        .add("hidden");
+}
+
 function showRepoTab(tab) {
     if (!currentRepository) return;
 
