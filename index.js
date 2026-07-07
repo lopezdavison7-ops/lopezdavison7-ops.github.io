@@ -477,6 +477,34 @@ function formatFileSize(bytes){
     return `${(bytes/1024/1024).toFixed(1)} MB`;
 }
 
+async function openRepositoryFile(path){
+    const owner =
+        currentRepository.owner;
+
+    const repo =
+        currentRepository.repo;
+
+    const branch =
+        currentRepository.repository.default_branch;
+
+    const response = await fetch(
+`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${path}`
+    );
+
+    if(!response.ok){
+
+        alert("No se pudo abrir el archivo.");
+
+        return;
+
+    }
+
+    const code =
+        await response.text();
+
+    showCodeViewer(path, code);
+}
+
 function showRepoTab(tab) {
     if (!currentRepository) return;
 
@@ -530,8 +558,10 @@ npm start
               html += `
 <div class="grid grid-cols-12 px-4 py-2 border-b border-gray-800 hover:bg-gray-800 transition">
   <div class="col-span-7 truncate">
-    ${getFileIcon(file.path, file.type)}
-    ${file.path}
+    <div class="cursor-pointer hover:text-cyan-400 transition" onclick="openRepositoryFile('${file.path}')">
+      ${getFileIcon(file.path, file.type)}
+      ${file.path}
+    </div>
   </div>
 
   <div class="col-span-3 text-gray-400">

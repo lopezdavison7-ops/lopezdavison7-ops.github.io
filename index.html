@@ -227,8 +227,23 @@
                   <button class="repo-tab" onclick="showRepoTab('warnings')">⚠️ Avisos</button>
                 </div>
 
+                <div id="code-viewer" class="hidden mt-8">
+                  <div class="bg-gray-900 rounded-2xl overflow-hidden border border-gray-700">
+                    
+                    <div class="flex justify-between items-center bg-gray-800 px-6 py-4">
+                      <h3 id="code-title" class="font-bold text-cyan-400"> Archivo</h3>
+                      <button onclick="closeCodeViewer()" class="text-red-400">✖</button>
+                    </div>
+
+                    <pre class="overflow-auto p-6">
+                      <code id="code-content"></code>
+                    </pre>
+                  </div>
+                </div>
+                
                 <div id="repository-content" class="bg-gray-950 border border-cyan-400/20 rounded-2xl p-6 min-h-[300px]">
                 </div>
+
               </div>
 
               <!-- Configuración -->
