@@ -123,7 +123,7 @@ async function loadRepositories() {
 
 async function updateRepository() {
     closeCodeViewer();
-    
+
     const github = document.getElementById("repo-select").value;
 
     if (!github) {
@@ -374,9 +374,9 @@ function getFileIcon(path, type) {
     if (name.startsWith("contributing")) return "🤝";
 
     // JavaScript / TypeScript
-    if (name.endsWith(".js")) return "🟨";
-    if (name.endsWith(".mjs")) return "🟨";
-    if (name.endsWith(".cjs")) return "🟨";
+    if (name.endsWith(".js")) return "⚡";
+    if (name.endsWith(".mjs")) return "⚡";
+    if (name.endsWith(".cjs")) return "⚡";
     if (name.endsWith(".ts")) return "🔷";
 
     // Web
