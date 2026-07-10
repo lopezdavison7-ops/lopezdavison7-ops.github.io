@@ -15,17 +15,10 @@ import { registerConsoleEvents, logConsole } from "../console/index.js";
 import { showSection } from "./router.js";
 
 export async function bootstrap() {
-    // window.onload = async () => {
-    
-    console.log("Entró a bootstrap");
-    alert("7. Entró a bootstrap");
-    
+    // window.onload = async () => {    
     const {
         data: { session }
     } = await supabase.auth.getSession();
-
-    console.log("Session obtenida");
-    alert("8. Session obtenida");
 
     if (!session) {
         resetUI();
