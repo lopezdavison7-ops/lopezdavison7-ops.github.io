@@ -4,7 +4,9 @@ import * as repository from "../repository/index.js";
 import * as terminal from "../console/index.js";
 import { showSection } from "./router.js";
 
-export function registerWindowAPI() {
+export async function registerWindowAPI() {
+    console.log("Registrando window.login");
+    
     // Auth
     window.showLogin = auth.showLogin;
     window.showRegister = auth.showRegister;
