@@ -1,6 +1,8 @@
+import { getBots } from "./state.js";
+
 export function renderBots() {
   const container = document.getElementById('bots-list');
-  container.innerHTML = bots.map(bot => `
+  container.innerHTML = getBots().map(bot => `
     <div class="bg-gray-900 border border-gray-700 hover:border-blue-500 rounded-3xl p-6 transition">
       <div class="flex justify-between items-start">
         <div>
