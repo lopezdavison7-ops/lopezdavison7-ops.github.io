@@ -5,22 +5,31 @@ import * as terminal from "../console/index.js";
 import { showSection } from "./router.js";
 
 export function registerWindowAPI() {
-    window.showLogin = showLogin;
-    window.showRegister = showRegister;
-    window.register = register;
-    window.login = login;
-    window.logout = logout;
+    // Auth
+    window.showLogin = auth.showLogin;
+    window.showRegister = auth.showRegister;
+    window.register = auth.register;
+    window.login = auth.login;
+    window.logout = auth.logout;
+    window.deleteAccount = auth.deleteAccount;
+
+    // Router
     window.showSection = showSection;
-    window.loadRepositories = loadRepositories;
-    window.updateRepository = updateRepository;
-    window.openRepositoryFile = openRepositoryFile;
-    window.closeCodeViewer = closeCodeViewer;
-    window.deleteBot = deleteBot;
-    window.deployBot = deployBot;
-    window.toggleBot = toggleBot;
-    window.showRepoTab = showRepoTab;
-    window.openConsole = openConsole;
-    window.sendCommand = sendCommand;
-    window.runCommand = runCommand;
-    window.deleteAccount = deleteAccount;
+
+    // Repository
+    window.loadRepositories = repository.loadRepositories;
+    window.updateRepository = repository.updateRepository;
+    window.openRepositoryFile = repository.openRepositoryFile;
+    window.closeCodeViewer = repository.closeCodeViewer;
+    window.showRepoTab = repository.showRepoTab;
+
+    // Bots
+    window.deleteBot = bots.deleteBot;
+    window.deployBot = bots.deployBot;
+    window.toggleBot = bots.toggleBot;
+    window.openConsole = bots.openConsole;
+
+    // Console
+    window.sendCommand = terminal.sendCommand;
+    window.runCommand = terminal.runCommand;
 }
