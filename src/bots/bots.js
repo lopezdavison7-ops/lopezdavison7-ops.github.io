@@ -1,4 +1,5 @@
 import { getCurrentUser } from "../auth/session.js";
+import { supabase } from "../supabase.js";
 
 export async function loadBots() {
 
