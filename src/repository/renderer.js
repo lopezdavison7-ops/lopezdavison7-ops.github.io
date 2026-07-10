@@ -1,5 +1,7 @@
+import { getCurrentRepository } from "./state.js";
+
 export function renderRepositoryCard(){
-    const repo=currentRepository.repository;
+    const repo=getCurrentRepository().repository;
 
     document.getElementById("repository-card")
         .classList.remove("hidden");
@@ -51,7 +53,7 @@ export function showRepoTab(tab) {
     // Ocultar el visor de código al cambiar de pestaña
     closeCodeViewer();
 
-    if (!currentRepository) return;
+    if (!getCurrentRepository()) return;
 
     const container = document.getElementById("repository-content");
 
@@ -59,7 +61,7 @@ export function showRepoTab(tab) {
         case "readme":
             container.innerHTML = `
                 <div class="prose prose-invert max-w-none">
-                    ${marked.parse(currentRepository.readme || "# README no encontrado")}
+                    ${marked.parse(getCurrentRepository().repository.readme || "# README no encontrado")}
                 </div>
             `;
             break;
@@ -67,9 +69,9 @@ export function showRepoTab(tab) {
         case "install":
             container.innerHTML = `
 <pre class="bg-gray-900 rounded-xl p-5 overflow-auto">
-git clone ${currentRepository.repository.clone_url}
+git clone ${getCurrentRepository().repository.clone_url}
 
-cd ${currentRepository.repository.name}
+cd ${getCurrentRepository().repository.name}
 
 npm install
 
@@ -80,8 +82,8 @@ npm start
 
         case "dependencies":
             container.innerHTML =
-                currentRepository.dependencies.length
-                    ? currentRepository.dependencies.map(dep =>
+                getCurrentRepository().repository.dependencies.length
+                    ? getCurrentRepository().repository.dependencies.map(dep =>
                         `<span class="inline-block bg-cyan-700 rounded-lg px-3 py-2 mr-2 mb-2">${dep}</span>`
                     ).join("")
                     : "No se encontraron dependencias.";
@@ -98,7 +100,7 @@ npm start
 </div>
           `;
 
-          currentRepository.tree.forEach(file => {
+          getCurrentRepository().repository.tree.forEach(file => {
 
               html += `
 <div class="grid grid-cols-12 px-4 py-2 border-b border-gray-800 hover:bg-gray-800 transition">
@@ -128,7 +130,7 @@ npm start
           break;
 
         case "info":
-            const repo = currentRepository.repository;
+            const repo = getCurrentRepository().repository;
 
             container.innerHTML = `
 <h2 class="text-2xl font-bold mb-6 text-cyan-400">
@@ -178,8 +180,8 @@ ${new Date(repo.updated_at).toLocaleString()}
 
         case "warnings":
             container.innerHTML =
-                currentRepository.warnings.length
-                    ? currentRepository.warnings.map(w =>
+                getCurrentRepository().repository.warnings.length
+                    ? getCurrentRepository().repository.warnings.map(w =>
                         `<div class="bg-yellow-700 rounded-xl p-3 mb-2">⚠ ${w}</div>`
                     ).join("")
                     : "✅ No se detectaron avisos.";
