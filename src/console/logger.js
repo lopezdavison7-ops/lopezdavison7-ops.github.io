@@ -1,3 +1,5 @@
+import { consoleBox } from "./terminal.js";
+
 export function logConsole(msg) {
   const line = document.createElement("div");
   line.textContent = msg;
