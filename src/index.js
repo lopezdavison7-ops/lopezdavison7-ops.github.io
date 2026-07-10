@@ -49,31 +49,6 @@ import {
 } from "./console/index.js";
 
 import { startApplication } from "./core/index.js";
-    // Auth
-    window.showLogin = auth.showLogin;
-    window.showRegister = auth.showRegister;
-    window.register = auth.register;
-    window.login = auth.login;
-    window.logout = auth.logout;
-    window.deleteAccount = auth.deleteAccount;
-
-    // Router
-    window.showSection = showSection;
-
-    // Repository
-    window.loadRepositories = repository.loadRepositories;
-    window.updateRepository = repository.updateRepository;
-    window.openRepositoryFile = repository.openRepositoryFile;
-    window.closeCodeViewer = repository.closeCodeViewer;
-    window.showRepoTab = repository.showRepoTab;
-
-    // Bots
-    window.deleteBot = bots.deleteBot;
-    window.deployBot = bots.deployBot;
-    window.toggleBot = bots.toggleBot;
-    window.openConsole = bots.openConsole;
-
-    // Console
-    window.sendCommand = terminal.sendCommand;
-    window.runCommand = terminal.runCommand;
+await registerWindowAPI();
+await bootstrap();
 startApplication();
