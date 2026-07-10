@@ -1,7 +1,6 @@
 // (El script es el mismo que la versión anterior, se mantengo funcional)
 
 import { supabase } from "./supabase.js";
-import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 
 import {
     getFileIcon,
