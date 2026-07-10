@@ -51,5 +51,6 @@ import {
 import { startApplication } from "./core/index.js";
 
 console.log("index.js cargado");
+alert("1. index.js cargado");
 
 startApplication();

@@ -6,7 +6,8 @@ import { showSection } from "./router.js";
 
 export async function registerWindowAPI() {
     console.log("Registrando window.login");
-    
+    alert("Registrando window.login");
+
     // Auth
     window.showLogin = auth.showLogin;
     window.showRegister = auth.showRegister;
