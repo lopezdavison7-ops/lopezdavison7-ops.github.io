@@ -1,5 +1,7 @@
 import { repositories } from "../data/repositories.js";
-import { getRepositoryData, analyzeRepository } from "./github.js";
+import { getRepositoryData } from "./github.js";
+import { analyzeRepository } from "./analyzer.js";
+import { setCurrentRepository } from "./state.js";
 import { renderRepositoryCard } from "./renderer.js";
 import { closeCodeViewer } from "./viewer.js";
 
@@ -56,7 +58,7 @@ export async function updateRepository() {
     }
 
     try {
-        currentRepository = await analyzeRepository(github);
+        setCurrentRepository(await analyzeRepository(github));
         renderRepositoryCard();
 
         document
