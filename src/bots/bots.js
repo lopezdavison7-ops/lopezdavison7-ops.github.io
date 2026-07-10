@@ -1,10 +1,11 @@
 import { getCurrentUser } from "../auth/session.js";
 import { supabase } from "../supabase.js";
+import { getBots, setBots } from "./state.js";
 
 export async function loadBots() {
 
     if (!getCurrentUser()) {
-        bots = [];
+        clearBots();
         renderBots();
         return;
     }
@@ -20,7 +21,7 @@ export async function loadBots() {
         return alert("No se pudieron cargar los bots.");
     }
 
-    bots = data ?? [];
+    setBots(data);
 
     renderBots();
 }
