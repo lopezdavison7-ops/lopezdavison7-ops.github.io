@@ -1,3 +1,19 @@
+import { supabase } from "../supabase.js";
+
+import {
+    resetUI,
+    getCurrentUser,
+    setCurrentUser
+} from "../auth/index.js";
+
+import { loadBots } from "../bots/index.js";
+
+import { loadRepositories } from "../repository/index.js";
+
+import { registerConsoleEvents, logConsole } from "../console/index.js";
+
+import { showSection } from "./router.js";
+
 export async function bootstrap() {
     // window.onload = async () => {
     const {
