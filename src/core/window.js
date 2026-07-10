@@ -5,8 +5,8 @@ import * as terminal from "../console/index.js";
 import { showSection } from "./router.js";
 
 export async function registerWindowAPI() {
-    console.log("Registrando window.login");
-    alert("Registrando window.login");
+    console.log("Entró a registerWindowAPI");
+    alert("5. Entró a registerWindowAPI");
 
     // Auth
     window.showLogin = auth.showLogin;
@@ -35,4 +35,7 @@ export async function registerWindowAPI() {
     // Console
     window.sendCommand = terminal.sendCommand;
     window.runCommand = terminal.runCommand;
+
+    console.log("login registrada");
+    alert("6. login registrada");
 }
