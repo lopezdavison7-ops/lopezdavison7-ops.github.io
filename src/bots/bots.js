@@ -1,3 +1,5 @@
+import { getCurrentUser } from "../auth/session.js";
+
 export async function loadBots() {
 
     if (!getCurrentUser()) {

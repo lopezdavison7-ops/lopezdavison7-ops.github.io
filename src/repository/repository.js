@@ -1,3 +1,5 @@
+import { repositories } from "../data/repositories.js";
+
 export async function loadRepositories() {
     const type = document.getElementById("bot-type").value;
     const repoSelect = document.getElementById("repo-select");
