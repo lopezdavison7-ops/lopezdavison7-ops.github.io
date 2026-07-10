@@ -1,4 +1,7 @@
 import { repositories } from "../data/repositories.js";
+import { getRepositoryData, analyzeRepository } from "./github.js";
+import { renderRepositoryCard } from "./renderer.js";
+import { closeCodeViewer } from "./viewer.js";
 
 export async function loadRepositories() {
     const type = document.getElementById("bot-type").value;
