@@ -1,3 +1,5 @@
+import { getRepositoryData } from "./github.js";
+
 export function detectWarnings(tree){
     const files = tree.map(file=>file.path);
     const warnings=[];
