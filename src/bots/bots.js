@@ -1,6 +1,7 @@
 import { getCurrentUser } from "../auth/session.js";
 import { supabase } from "../supabase.js";
-import { getBots, setBots } from "./state.js";
+import { clearBots, setBots } from "./state.js";
+import { renderBots } from "./render.js";
 
 export async function loadBots() {
 
