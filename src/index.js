@@ -49,5 +49,5 @@ import {
 } from "./console/index.js";
 
 import { startApplication } from "./core/index.js";
-
+registerWindowAPI();
 startApplication();
