@@ -83,8 +83,8 @@ npm start
 
         case "dependencies":
             container.innerHTML =
-                getCurrentRepository().repository.dependencies.length
-                    ? getCurrentRepository().repository.dependencies.map(dep =>
+                getCurrentRepository().dependencies.length
+                    ? getCurrentRepository().dependencies.map(dep =>
                         `<span class="inline-block bg-cyan-700 rounded-lg px-3 py-2 mr-2 mb-2">${dep}</span>`
                     ).join("")
                     : "No se encontraron dependencias.";
@@ -101,7 +101,7 @@ npm start
 </div>
           `;
 
-          getCurrentRepository().repository.tree.forEach(file => {
+          getCurrentRepository().tree.forEach(file => {
 
               html += `
 <div class="grid grid-cols-12 px-4 py-2 border-b border-gray-800 hover:bg-gray-800 transition">
@@ -181,8 +181,8 @@ ${new Date(repo.updated_at).toLocaleString()}
 
         case "warnings":
             container.innerHTML =
-                getCurrentRepository().repository.warnings.length
-                    ? getCurrentRepository().repository.warnings.map(w =>
+                getCurrentRepository().warnings.length
+                    ? getCurrentRepository().warnings.map(w =>
                         `<div class="bg-yellow-700 rounded-xl p-3 mb-2">⚠ ${w}</div>`
                     ).join("")
                     : "✅ No se detectaron avisos.";
