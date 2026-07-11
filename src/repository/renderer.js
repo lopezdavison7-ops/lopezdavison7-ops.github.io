@@ -62,7 +62,7 @@ export function showRepoTab(tab) {
         case "readme":
             container.innerHTML = `
                 <div class="prose prose-invert max-w-none">
-                    ${marked.parse(getCurrentRepository().repository.readme || "# README no encontrado")}
+                    ${marked.parse(getCurrentRepository().readme || "# README no encontrado")}
                 </div>
             `;
             break;
