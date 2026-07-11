@@ -1,4 +1,5 @@
 import { getCurrentRepository } from "./state.js";
+import { getFileIcon, getFileType, formatFileSize } from "../utils/file.js";
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 
 export function renderRepositoryCard(){
