@@ -1,12 +1,14 @@
+import { getCurrentRepository } from "./state.js";
+
 export async function openRepositoryFile(path){
     const owner =
-        currentRepository.owner;
+        getCurrentRepository().owner;
 
     const repo =
-        currentRepository.repo;
+        getCurrentRepository().repo;
 
     const branch =
-        currentRepository.repository.default_branch;
+        getCurrentRepository().repository.default_branch;
 
     const response = await fetch(
 `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${path}`
