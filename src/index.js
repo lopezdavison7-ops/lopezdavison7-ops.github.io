@@ -49,4 +49,6 @@ import {
 
 import { startApplication } from "./core/index.js";
 
+await registerWindowAPI()
+await bootstrap()
 startApplication();
