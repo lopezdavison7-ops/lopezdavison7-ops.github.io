@@ -4,6 +4,7 @@ import { loadBots } from "./bots.js";
 import { getBots } from "./state.js";
 import { showSection } from "../core/router.js";
 import { logConsole } from "../console/logger.js";
+import { consoleBox } from "../console/terminal.js";
 
 export async function deleteBot(id) {
     if (!confirm("¿Eliminar este bot?")) return;
