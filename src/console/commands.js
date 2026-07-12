@@ -1,4 +1,5 @@
-import { consoleInput } from "./terminal.js";
+import { consoleInput, consoleBox } from "./terminal.js";
+import { logConsole } from "./logger.js";
 
 export function runCommand(cmd = "") {
   cmd = cmd.trim();
