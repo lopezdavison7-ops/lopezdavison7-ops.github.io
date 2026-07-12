@@ -1,6 +1,9 @@
 import { getCurrentUser } from "../auth/session.js";
 import { supabase } from "../supabase.js";
 import { loadBots } from "./bots.js";
+import { getBots } from "./state.js";
+import { showSection } from "../core/router.js";
+import { logConsole } from "../console/logger.js";
 
 export async function deleteBot(id) {
     if (!confirm("¿Eliminar este bot?")) return;
@@ -22,7 +25,7 @@ export async function deleteBot(id) {
 }
 
 export async function toggleBot(id) {
-    const bot = bots.find(b => b.id === id);
+    const bot = getBots().find(b => b.id === id);
 
     if (!bot) return;
 
@@ -56,7 +59,7 @@ export async function toggleBot(id) {
 export function openConsole(id) {
     showSection("console");
 
-    const bot = bots.find(b => b.id === id);
+    const bot = getBots().find(b => b.id === id);
 
     if (!bot) return;
 
