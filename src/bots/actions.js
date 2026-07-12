@@ -1,3 +1,7 @@
+import { getCurrentUser } from "../auth/session.js";
+import { supabase } from "../supabase.js";
+import { loadBots } from "./bots.js";
+
 export async function deleteBot(id) {
     if (!confirm("¿Eliminar este bot?")) return;
 
