@@ -49,8 +49,4 @@ import {
 
 import { startApplication } from "./core/index.js";
 
-alert("index.js cargado");
-
 startApplication();
-
-alert|("después de startApplication");
