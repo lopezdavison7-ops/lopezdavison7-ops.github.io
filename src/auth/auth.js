@@ -1,4 +1,5 @@
 import { supabase } from "../supabase.js";
+import { getCurrentUser, setCurrentUser, clearCurrentUser } from "../session.js";
 
 export function showLogin() {
   document.getElementById('login-form').classList.remove('hidden');

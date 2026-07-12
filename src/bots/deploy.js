@@ -1,3 +1,7 @@
+import { getCurrentUser } from "./session.js";
+import { supabase } from "../supabase.js";
+import { loadBots } from "./bots.js";
+
 export async function deployBot() {
     if (!getCurrentUser()) {
         return alert("Debes iniciar sesión.");
