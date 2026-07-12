@@ -1,4 +1,4 @@
-import { getCurrentUser } from "./session.js";
+import { getCurrentUser } from "../auth/session.js";
 import { supabase } from "../supabase.js";
 import { loadBots } from "./bots.js";
 
