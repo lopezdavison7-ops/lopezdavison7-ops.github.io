@@ -1,5 +1,6 @@
 import { consoleInput, consoleBox } from "./terminal.js";
 import { logConsole } from "./logger.js";
+import { getBots } from "../bots/state.js";
 
 export function runCommand(cmd = "") {
   cmd = cmd.trim();
@@ -35,7 +36,7 @@ time        - Hora actual`);
     case "bots":
         logConsole(`/> ${command}
             
-Bots activos: ${bots.length}`);
+Bots activos: ${getBots().length}`);
         logConsole("/>");
         break;
 
