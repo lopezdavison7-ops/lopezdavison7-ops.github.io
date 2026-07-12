@@ -5,8 +5,6 @@ import * as terminal from "../console/index.js";
 import { showSection } from "./router.js";
 
 export async function registerWindowAPI() {
-    console.log("Registrando Window API");
-    
     // Auth
     window.showLogin = auth.showLogin;
     window.showRegister = auth.showRegister;
