@@ -64,6 +64,7 @@ export async function bootstrap() {
 
     } catch (error) {
         console.error("Error al conectar con Supabase:", error);
+        alert("Error al conectar con Supabase", error);
         resetUI();
     }
 };
